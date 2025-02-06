@@ -1,0 +1,727 @@
+<!DOCTYPE html><html><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Affilate FJ - Dashboard</title>
+
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.theme.css">
+
+    <link rel="stylesheet" href="css/main.css">
+
+</head>
+
+<body>
+
+    <!--[if lt IE 8]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser.
+    Please <a href="http://browsehappy.com/">upgrade your browser</a>
+    to improve your experience.</p>
+   <![endif]-->
+
+    <!--  Loading -->
+    <div id="loader"></div>
+
+    <div id="wrapper" class="index">
+        <div class="side-bar">
+
+            <a class="logo" href="/"></a>
+            <div class="navi">
+                <a class="dashboard active" href="/">
+                    <div class="icon"></div>Dashboard</a>
+                <a class="referals" href="/referals">
+                    <div class="icon"></div>User Referals</a>
+                <a class="charts" href="/charts">
+                    <div class="icon"></div>Charts</a>
+                <a class="trackers" href="/trackers">
+                    <div class="icon"></div>Trackers</a>
+                <a class="materials" href="/materials">
+                    <div class="icon"></div>Materials</a>
+            </div>
+            <a class="back-btn" href="#">
+                <div class="icon"></div>Back to site</a>
+        </div>
+        <div class="header">
+            <div class="left col">Fortunejack <span>Partners</span></div>
+            <div class="center col">
+                <div class="date-time">
+                    <div class="icon"></div>
+                    <div class="day-month">02 March.</div>
+                    <div class="time">21:30</div>
+                </div>
+                <div class="u-text">Amount lost by your referral in alt coins is converted and distributed in BTC</div>
+            </div>
+            <div class="right col">
+                <div class="user-area">
+                    <div class="user-name">Name Lastname ˇ</div>
+                    <div class="user-pic"></div>
+                </div>
+                <div class="search">
+                    <input type="text" name="search" placeholder="Search..">
+                </div>
+            </div>
+            <div class="user-data">
+                <div class="top-panel">
+                    <div class="cancel-btn">Cancel</div>
+                    <div class="save-btn">Save</div>
+                </div>
+                <div class="user-info">
+                    <div class="label">
+                        <div class="label-icon"></div>
+                        User Information
+                    </div>
+                    <div class="name">
+                        <span>Name</span>
+                        <input type="text" value="George">
+                    </div>
+                    <div class="lastname">
+                        <span>Lastname</span>
+                        <input type="text" value="Anderson">
+                    </div>
+                    <div class="username">
+                        <span>Username</span>
+                        <input type="text" value="George777">
+                    </div>
+                    <div class="website">
+                        <span>Website</span>
+                        <input type="text" value="www.george.com">
+                    </div>
+                    <div class="company">
+                        <span>Name</span>
+                        <input type="text" value="George">
+                    </div>
+                    <div class="country">
+                        <span>Country</span>
+                        <input type="text" value="USA">
+                    </div>
+                    <div class="language">
+                        <span>Language</span>
+                        <input type="text" value="English">
+                    </div>
+                    <div class="password">
+                        <span>Name</span>
+                        <input type="password" value="password">
+                    </div>
+                    <div class="repeat">
+                        <span>Repeat</span>
+                        <input type="password" value="password">
+                    </div>
+                </div>
+                <div class="contact-info">
+                    <div class="label">
+                        <div class="label-icon"></div>
+                        Contact Information
+                    </div>
+                    <div class="email">
+                        <span>Email</span>
+                        <input type="text" value="George@mail.com">
+                    </div>
+                    <div class="phone">
+                        <span>Phone</span>
+                        <input type="text" value="+995 32 000000">
+                    </div>
+                </div>
+                <div class="bottom-panel">
+                    <div class="log-out">
+                        <div class="label-icon"></div> Log Out
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div id="tabs">
+                <ul class="cont-head cf">
+                    <li><a href="#revenue-share" class="switcher-but active">Revenue Share</a></li>
+                    <li><a href="#sub-affiliate" class="switcher-but">Sub Affiliate</a></li>
+                </ul>
+                <div class="cont-body">
+
+                    <div id="revenue-share">
+                        <div class="filters">
+                            <!-- <div class="label-select">Category:</div>
+                            <div class="select category">
+                                <select>
+                                    <option>Current Casino Affiliate</option>
+                                    <option>Current Poker Affiliate</option>
+                                    <option>Current Sportsbook Affiliate</option>
+                                    <option>Current Financials Affiliate</option>
+                                </select>
+                            </div> -->
+
+                            <div class="select date-from">
+                                <select>
+                                    <option>All Time</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                </select>
+                            </div>
+                            <div class="select date-to">
+                                <input type="text" class="datepicker from-date">
+                            </div>
+                            <div class="select">
+                                <input type="text" class="datepicker to-date">
+                            </div>
+                        </div>
+                        <!--  Charts -->
+                        <div class="chart-container">
+                            <div class="chart-title">Deposit</div>
+                            <div class="chart-subtitle">800,970.000</div>
+                            <div id="revenue-share-chart" class="chart"></div>
+                        </div>
+
+                        <div class="cont-foot">
+                            <div class="tab-cont active big">
+                                <div class="title">My Profit</div>
+                                <div class="big-num">420.000 <span class="icon-bitcoin"></span></div>
+                                <div class="round-chart" id="my-profit-roundchart"></div>
+                                <div class="chart" id="my-profit-chart"></div>
+                            </div>
+                            <div class="tab-cont medium">
+                                <div class="title">Wagered</div>
+                                <div class="big-num">3.000 <span class="icon-bitcoin dark"></span></div>
+                                <div class="round-chart" id="wagered-roundchart"></div>
+                                <div class="table cf">
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 56.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 56.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Sportsbook</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 56.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Financial</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 56.000.000
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-cont medium">
+                                <div class="title">Casino Profit</div>
+                                <div class="big-num">20.063 <span class="icon-bitcoin dark"></span></div>
+                                <div class="round-chart" id="casino-profit-roundchart"></div>
+                                <div class="table">
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 30.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Sportsbook</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Financial</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 11.564.000
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sub-affiliate">
+                        <div class="filters">
+
+                            <div class="select date-from">
+                                <select>
+                                    <option>All Time</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                </select>
+                            </div>
+                            <div class="select date-to">
+                                <input type="text" class="datepicker from-date">
+                            </div>
+                            <div class="select">
+                                <input type="text" class="datepicker to-date">
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Deposit</div>
+                            <div class="chart-subtitle">800,970.000</div>
+                            <div id="sub-affiliate-chart" class="chart"></div>
+                        </div>
+                        <div class="cont-foot">
+                            <div class="tab-cont active big">
+                                <div class="title">My Profit</div>
+                                <div class="big-num">125.000 <span class="icon-bitcoin"></span></div>
+                                <div class="round-chart" id="my-profit-roundchart-2"></div>
+                                <div class="chart" id="my-profit-chart-2"></div>
+                            </div>
+                            <div class="tab-cont medium">
+                                <div class="title">Wagered</div>
+                                <div class="big-num">2.500 <span class="icon-bitcoin dark"></span></div>
+                                <div class="round-chart" id="wagered-roundchart-2"></div>
+                                <div class="table">
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 37.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 41.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Sportsbook</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 27.000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Financial</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 16.000.000
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-cont medium">
+                                <div class="title">Casino Profit</div>
+                                <div class="big-num">16.063 <span class="icon-bitcoin dark"></span></div>
+                                <div class="round-chart" id="casino-profit-roundchart-2"></div>
+                                <div class="table">
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Casino</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 20.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Sportsbook</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 000.000
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="title">Financial</div>
+                                        <div class="value">
+                                            <span class="icon-bitcoin yellow"></span> 9.564.000
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="footer"></div>
+    </div>
+    
+
+    <script src="js/analytics.js"></script><script src="js/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+    </script><script src="js/jquery-1.11.2.min.js"></script>
+
+
+
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/loader.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+
+    <script type="text/javascript">
+        $(window).load(function() {
+            google.charts.load('current', {
+                'packages': ['line', 'corechart']
+            });
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+
+                var options1 = {
+                    //  curveType: 'function',
+                    title: '',
+                    height: 400,
+                    backgroundColor: 'transparent',
+                    animation: {
+                        duration: 300,
+                        easing: 'out',
+                        startup: true
+                    },
+                    chartArea: {
+                        left: 0,
+                        top: 70,
+                        'width': '100%',
+                        'height': '76%'
+                    },
+                    series: {
+                        0: {
+                            color: '#ffbc00',
+                            lineWidth: 3,
+                            pointSize: 5,
+                            visibleInLegend: true,
+                            targetAxisIndex: 0
+                        },
+                        1: {
+                            color: '#a3a3a3',
+                            lineWidth: 1.3,
+                            pointSize: 5,
+                            visibleInLegend: true,
+                            targetAxisIndex: 0
+                        },
+                    },
+                    vAxis: {
+                        gridlines: {
+                            // count: 5
+                            color: '#d9d9d9',
+                        },
+                        textPosition: 'in',
+                        baselineColor: '#d9d9d9',
+                        gridlineColor: '#d9d9d9',
+                        //   scaleType: 'log',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            fontName: 'Arial',
+                            fontSize: '15',
+                            bold: false,
+                            italic: false,
+                            bold: true,
+                        },
+                    },
+                    hAxis: {
+                        gridlines: {
+                            color: '#d9d9d9',
+                        },
+                        textPosition: 'out',
+                        baselineColor: '#d9d9d9',
+                        gridlineColor: '#d9d9d9',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            fontName: 'Arial',
+                            fontSize: '14',
+                            bold: false,
+                            italic: false,
+                        },
+                    },
+                    // can be costumized
+                    legend: {
+                        position: 'top',
+                        alignment: 'end',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            bold: true,
+                            fontSize: 15,
+                        },
+                    },
+                    tooltip: {
+                        // CSS styling affects only HTML tooltips.
+                        isHtml: true
+                    },
+                    dataOpacity: 1,
+                };
+
+                var options2 = {
+                    //  curveType: 'function',
+                    title: '',
+                    backgroundColor: 'transparent',
+                    // animation: {
+                    //     duration: 300,
+                    //     easing: 'out',
+                    //     startup: true
+                    // },
+                    chartArea: {
+                        left: 0,
+                        top: 0,
+                        'width': '100%',
+                        'height': '70%'
+                    },
+                    animation: {
+                        duration: 300,
+                        easing: 'out',
+                        startup: true
+                    },
+                    series: {
+                        0: {
+                            color: '#3b3b3b',
+                            lineWidth: 1.2,
+                            pointSize: 5,
+                            visibleInLegend: true
+                        }
+                    },
+                    vAxis: {
+                        gridlines: {
+                            // count: 5
+                            color: '#ebaf06',
+                        },
+                        textPosition: 'in',
+                        baselineColor: '#ebaf06',
+                        gridlineColor: '#ebaf06',
+                        //   scaleType: 'log',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            fontName: 'Arial',
+                            fontSize: '15',
+                            bold: false,
+                            italic: false,
+                            bold: true,
+                        },
+                    },
+                    hAxis: {
+                        gridlines: {
+                            color: '#ebaf06',
+                        },
+                        textPosition: 'out',
+                        baselineColor: '#ebaf06',
+                        gridlineColor: '#ebaf06',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            fontName: 'Arial',
+                            fontSize: '14',
+                            bold: true,
+                            italic: false,
+                        },
+                    },
+                    // can be costumized
+                    legend: {
+                        position: 'none',
+                        alignment: 'end',
+                        textStyle: {
+                            color: '#3b3b3b',
+                            bold: true,
+                            fontSize: 15,
+                        },
+                    },
+                    tooltip: {
+                        // CSS styling affects only HTML tooltips.
+                        isHtml: true
+                    },
+                    dataOpacity: 1,
+                };
+
+                var options4 = {
+                    // chartArea: {
+                    //     left: 0,
+                    //     top: 0,
+                    //     width: "100%",
+                    //     height: "100%"
+                    // },
+                    backgroundColor: {
+                        stroke: "red",
+                        strokeWidth: 0,
+                        fill: "transparent"
+                    },
+                    width: "60",
+                    pieHole: 0.75,
+                    pieSliceTextStyle: {
+                        color: 'black',
+                    },
+                    legend: 'none',
+                    colors: ['#574d33', '#cccccc', '#574d33', '#878787', '#574d33', '#878787'],
+                    pieSliceBorderColor: "transparent"
+                };
+
+
+                options1.vAxis.format = '#,### B';
+
+                var data1 = new google.visualization.DataTable();
+                data1.addColumn('string', 'Bitcoins');
+                data1.addColumn('number', 'LINE1');
+                data1.addColumn('number', 'LINE2');
+
+                // data1.addRow(['X Row string', {v:1, f:'Tooltip String'},  null]);
+                data1.addRow(['1 ABC', {
+                    v: 3,
+                    f: 'Tooltip 1'
+                }, {
+                    v: 7,
+                    f: 'Tooltip 1'
+                }]);
+                data1.addRow(['2 ABC', {
+                    v: 4,
+                    f: 'Tooltip 2'
+                }, {
+                    v: 1,
+                    f: 'Tooltip 1'
+                }]);
+                data1.addRow(['3 ABC', {
+                    v: 3,
+                    f: 'Tooltip 3'
+                }, {
+                    v: 8,
+                    f: 'Tooltip 1'
+                }]);
+
+                var data2 = new google.visualization.DataTable();
+                data2.addColumn('string', 'Bitcoins');
+                data2.addColumn('number', 'LINE1');
+                data2.addColumn('number', 'LINE2');
+
+                // data1.addRow(['X Row string', {v:1, f:'Tooltip String'},  null]);
+                data2.addRow(['1 ABC', {
+                    v: 1,
+                    f: 'Tooltip 1'
+                }, {
+                    v: 7,
+                    f: 'Tooltip 1'
+                }]);
+                data2.addRow(['2 ABC', {
+                    v: 8,
+                    f: 'Tooltip 2'
+                }, {
+                    v: 4,
+                    f: 'Tooltip 1'
+                }]);
+                data2.addRow(['3 ABC', {
+                    v: 3,
+                    f: 'Tooltip 3'
+                }, {
+                    v: 8,
+                    f: 'Tooltip 1'
+                }]);
+
+                var data3 = new google.visualization.DataTable();
+                data3.addColumn('string', 'Bitcoins');
+                data3.addColumn('number', 'LINE1');
+
+                // data1.addRow(['X Row string', {v:1, f:'Tooltip String'},  null]);
+                data3.addRow(['Casino', {
+                    v: 1,
+                    f: 'Tooltip 1'
+                }]);
+                data3.addRow(['Poker', {
+                    v: 8,
+                    f: 'Tooltip 2'
+                }]);
+                data3.addRow(['Sportsbook', {
+                    v: 3,
+                    f: 'Tooltip 3'
+                }]);
+                data3.addRow(['Financials', {
+                    v: 6,
+                    f: 'Tooltip 3'
+                }]);
+
+                var data4 = google.visualization.arrayToDataTable([
+                    ['Effort', 'Amount given'],
+                    ['My all', 75],
+                    ['My all', 25],
+
+                ]);
+
+                // Create and draw the visualization.
+                chart1 = new google.visualization.LineChart(document.getElementById('revenue-share-chart'));
+                chart1.draw(data1, options1);
+
+                chart2 = new google.visualization.LineChart(document.getElementById('sub-affiliate-chart'));
+                chart2.draw(data2, options1);
+
+                chart3 = new google.visualization.LineChart(document.getElementById('my-profit-chart'));
+                chart3.draw(data3, options2);
+
+                var chart4 = new google.visualization.PieChart(document.getElementById('my-profit-roundchart'));
+                chart4.draw(data4, options4);
+
+                var chart5 = new google.visualization.PieChart(document.getElementById('wagered-roundchart'));
+                chart5.draw(data4, options4);
+
+                var chart6 = new google.visualization.PieChart(document.getElementById('casino-profit-roundchart'));
+                chart6.draw(data4, options4);
+
+                chart7 = new google.visualization.LineChart(document.getElementById('my-profit-chart-2'));
+                chart7.draw(data3, options2);
+
+                var chart8 = new google.visualization.PieChart(document.getElementById('my-profit-roundchart-2'));
+                chart8.draw(data4, options4);
+
+                var chart9 = new google.visualization.PieChart(document.getElementById('wagered-roundchart-2'));
+                chart9.draw(data4, options4);
+
+                var chart10 = new google.visualization.PieChart(document.getElementById('casino-profit-roundchart-2'));
+                chart10.draw(data4, options4);
+
+                drawCharts = function() {
+                    // change dimensions if necessary
+                    chart1.draw(data1, options1);
+                    chart2.draw(data2, options1);
+                    chart3.draw(data3, options2);
+                    chart4.draw(data4, options4);
+                    chart5.draw(data4, options4);
+                    chart6.draw(data4, options4);
+                    chart7.draw(data3, options2);
+                    chart8.draw(data4, options4);
+                    chart9.draw(data4, options4);
+                    chart10.draw(data4, options4);
+                }
+                if (window.addEventListener) {
+                    window.addEventListener('resize', drawCharts);
+                } else {
+                    window.attachEvent('onresize', drawCharts);
+                }
+            }
+            $("#tabs").tabs({
+                activate: function(event, ui) {
+                    drawChart();
+                }
+            });
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd"
+            }).datepicker("setDate", "0");
+        });
+    </script>
+
+    <!-- Google Analytics: change UA-XXXXX-X to site's ID. -->
+    <script>
+        (function(b, o, i, l, e, r) {
+            b.GoogleAnalyticsObject = l;
+            b[l] || (b[l] =
+                function() {
+                    (b[l].q = b[l].q || []).push(arguments)
+                });
+            b[l].l = +new Date;
+            e = o.createElement(i);
+            r = o.getElementsByTagName(i)[0];
+            e.src = '//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e, r)
+        }(window, document, 'script', 'ga'));
+        ga('create', 'UA-XXXXX-X', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+
+
+</body></html>
