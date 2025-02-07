@@ -1,0 +1,1 @@
+// Handle property-related API requests

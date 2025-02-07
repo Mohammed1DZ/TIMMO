@@ -1,0 +1,1 @@
+// Netlify Function for Property CRUD
