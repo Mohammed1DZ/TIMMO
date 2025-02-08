@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import PropertyForm from '../components/PropertyForm';
+import PropertyDetailsModal from '../components/PropertyDetailsModal';
 
 const Properties = () => {
-    const [properties, setProperties] = useState([]);  // Store the list of properties
-    const [selectedProperty, setSelectedProperty] = useState(null);  // Track the property to edit
-    const [isEditing, setIsEditing] = useState(false);  // Track editing mode
-    const [showForm, setShowForm] = useState(false);  // Toggle form visibility
+    const [properties, setProperties] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [selectedProperty, setSelectedProperty] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
 
     // Function to add a new property
     const handleAddProperty = (newProperty) => {
@@ -14,10 +15,11 @@ const Properties = () => {
     };
 
     // Function to handle property edits
-    const handleEditProperty = (property) => {
-        setSelectedProperty(property);  // Set the property to be edited
-        setIsEditing(true);  // Enable editing mode
-        setShowForm(true);  // Show the form with current details
+    const handleEditProperty = (e, property) => {
+        e.stopPropagation();  // Prevent the property click event from firing
+        setSelectedProperty(property);
+        setIsEditing(true);
+        setShowForm(true);
     };
 
     // Function to save the edited property
@@ -25,9 +27,19 @@ const Properties = () => {
         setProperties(properties.map((property) =>
             property.propertyId === updatedProperty.propertyId ? updatedProperty : property
         ));
-        setShowForm(false);  // Hide the form
-        setIsEditing(false);  // Exit editing mode
-        setSelectedProperty(null);  // Clear selected property
+        setShowForm(false);
+        setIsEditing(false);
+        setSelectedProperty(null);
+    };
+
+    // Function to handle property click for popup details
+    const handlePropertyClick = (property) => {
+        setSelectedProperty(property);
+    };
+
+    // Function to close the property details popup
+    const handleCloseModal = () => {
+        setSelectedProperty(null);
     };
 
     return (
@@ -37,8 +49,8 @@ const Properties = () => {
             <button
                 onClick={() => {
                     setShowForm(!showForm);
-                    setIsEditing(false);  // Reset editing mode when adding a new property
-                    setSelectedProperty(null);  // Clear selected property when adding new
+                    setIsEditing(false);
+                    setSelectedProperty(null);
                 }}
                 className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
             >
@@ -49,7 +61,7 @@ const Properties = () => {
             {showForm && (
                 <PropertyForm
                     onSubmit={isEditing ? handleSaveEditedProperty : handleAddProperty}
-                    property={selectedProperty}  // Pass the selected property for editing
+                    property={selectedProperty}
                     isEditing={isEditing}
                 />
             )}
@@ -60,7 +72,11 @@ const Properties = () => {
                     <p>No properties listed yet.</p>
                 ) : (
                     properties.map((property, index) => (
-                        <li key={index} className="border p-4 rounded shadow">
+                        <li
+                            key={index}
+                            className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100"
+                            onClick={() => handlePropertyClick(property)}  // Handle popup details
+                        >
                             <h3 className="text-xl font-bold">{property.title}</h3>
                             <p><strong>Location:</strong> {property.location}</p>
                             <p><strong>Price:</strong> ${property.price}</p>
@@ -68,7 +84,7 @@ const Properties = () => {
 
                             {/* Edit Button */}
                             <button
-                                onClick={() => handleEditProperty(property)}
+                                onClick={(e) => handleEditProperty(e, property)}  // Prevent property click when editing
                                 className="bg-yellow-500 text-white px-4 py-2 rounded mt-2"
                             >
                                 Edit
@@ -77,6 +93,13 @@ const Properties = () => {
                     ))
                 )}
             </ul>
+
+            {selectedProperty && (
+                <PropertyDetailsModal
+                    property={selectedProperty}
+                    onClose={handleCloseModal}
+                />
+            )}
         </div>
     );
 };
