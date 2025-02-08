@@ -14,14 +14,6 @@ const Properties = () => {
         setShowForm(false);
     };
 
-    // Function to handle property edits
-    const handleEditProperty = (e, property) => {
-        e.stopPropagation();  // Prevent the property click event from firing
-        setSelectedProperty(property);
-        setIsEditing(true);
-        setShowForm(true);
-    };
-
     // Function to save the edited property
     const handleSaveEditedProperty = (updatedProperty) => {
         setProperties(properties.map((property) =>
@@ -40,6 +32,12 @@ const Properties = () => {
     // Function to close the property details popup
     const handleCloseModal = () => {
         setSelectedProperty(null);
+    };
+
+    // Function to start editing from the modal
+    const handleEditFromModal = () => {
+        setIsEditing(true);
+        setShowForm(true);
     };
 
     return (
@@ -75,20 +73,12 @@ const Properties = () => {
                         <li
                             key={index}
                             className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100"
-                            onClick={() => handlePropertyClick(property)}  // Handle popup details
+                            onClick={() => handlePropertyClick(property)}  // Open property details
                         >
                             <h3 className="text-xl font-bold">{property.title}</h3>
                             <p><strong>Location:</strong> {property.location}</p>
                             <p><strong>Price:</strong> ${property.price}</p>
                             <p><strong>Status:</strong> {property.status}</p>
-
-                            {/* Edit Button */}
-                            <button
-                                onClick={(e) => handleEditProperty(e, property)}  // Prevent property click when editing
-                                className="bg-yellow-500 text-white px-4 py-2 rounded mt-2"
-                            >
-                                Edit
-                            </button>
                         </li>
                     ))
                 )}
@@ -98,6 +88,7 @@ const Properties = () => {
                 <PropertyDetailsModal
                     property={selectedProperty}
                     onClose={handleCloseModal}
+                    onEdit={handleEditFromModal}  // Handle edit from the modal
                 />
             )}
         </div>
