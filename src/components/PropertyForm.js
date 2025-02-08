@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const PropertyForm = ({ onSubmit }) => {
+const PropertyForm = ({ onSubmit, property = {}, isEditing }) => {
     const [formData, setFormData] = useState({
         propertyId: '',
         title: '',
@@ -11,6 +11,21 @@ const PropertyForm = ({ onSubmit }) => {
         status: 'Available',
         media: []
     });
+
+    useEffect(() => {
+        if (isEditing && property) {
+            setFormData({
+                propertyId: property.propertyId,
+                title: property.title,
+                type: property.type,
+                category: property.category,
+                price: property.price,
+                location: property.location,
+                status: property.status,
+                media: property.media
+            });
+        }
+    }, [isEditing, property]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,8 +41,8 @@ const PropertyForm = ({ onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);  // Pass the new property data to the parent component
-        alert('Property added successfully!');
+        onSubmit(formData);  // Pass the form data to the parent component (save or add)
+        alert('Property saved successfully!');
         setFormData({
             propertyId: '',
             title: '',
@@ -42,7 +57,7 @@ const PropertyForm = ({ onSubmit }) => {
 
     return (
         <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Add New Property</h2>
+            <h2 className="text-2xl font-bold mb-4">{isEditing ? 'Edit Property' : 'Add New Property'}</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block mb-2">Property ID</label>
