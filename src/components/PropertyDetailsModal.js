@@ -7,6 +7,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
 
     if (!property) return null;
 
@@ -20,17 +21,21 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [currentMediaIndex]);
 
-    // Swipe navigation for touch devices
+    // Handle touch events for swipe navigation
     const handleTouchStart = (e) => {
         setTouchStartX(e.touches[0].clientX);
     };
 
-    const handleTouchEnd = (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const swipeDistance = touchStartX - touchEndX;
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.touches[0].clientX);
+    };
 
-        if (swipeDistance > 50) handleNextMedia();  // Swipe left
-        if (swipeDistance < -50) handlePreviousMedia();  // Swipe right
+    const handleTouchEnd = () => {
+        if (touchStartX - touchEndX > 50) {
+            handleNextMedia();  // Swipe left
+        } else if (touchEndX - touchStartX > 50) {
+            handlePreviousMedia();  // Swipe right
+        }
     };
 
     const handlePreviousMedia = () => {
@@ -85,6 +90,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                         <div
                             className="relative"
                             onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
                         >
                             {/* Display image/video */}
