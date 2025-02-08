@@ -12,6 +12,7 @@ const PropertyForm = ({ onSubmit, property = {}, isEditing }) => {
         media: []
     });
 
+    // Pre-fill form data when editing
     useEffect(() => {
         if (isEditing && property) {
             setFormData({
@@ -41,18 +42,7 @@ const PropertyForm = ({ onSubmit, property = {}, isEditing }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);  // Pass the form data to the parent component (save or add)
-        alert('Property saved successfully!');
-        setFormData({
-            propertyId: '',
-            title: '',
-            type: 'Residential',
-            category: 'For Sale',
-            price: '',
-            location: '',
-            status: 'Available',
-            media: []
-        });
+        onSubmit(formData);  // Send the form data to be saved or added
     };
 
     return (
@@ -67,6 +57,7 @@ const PropertyForm = ({ onSubmit, property = {}, isEditing }) => {
                         value={formData.propertyId}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
+                        disabled={isEditing}  // Disable ID field when editing
                         required
                     />
                 </div>
@@ -157,22 +148,10 @@ const PropertyForm = ({ onSubmit, property = {}, isEditing }) => {
                         onChange={handleMediaUpload}
                         className="w-full p-2 border rounded"
                     />
-                    {formData.media.length > 0 && (
-                        <div className="mt-4">
-                            <h4 className="font-semibold">Uploaded Files:</h4>
-                            <ul className="list-disc ml-5">
-                                {formData.media.map((file, index) => (
-                                    <li key={index} className="text-sm text-gray-600">
-                                        {file.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                 </div>
 
                 <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-                    Submit Property
+                    {isEditing ? 'Save Changes' : 'Submit Property'}
                 </button>
             </form>
         </div>
