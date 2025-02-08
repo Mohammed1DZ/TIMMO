@@ -1,35 +1,37 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';  // Import icons
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = () => {
     const links = [
-        { path: '/', label: 'Dashboard' },
-        { path: '/properties', label: 'Properties' },
-        { path: '/clients', label: 'Clients' },
-        { path: '/agents', label: 'Agents' },
-        { path: '/settings', label: 'Settings' }
+        { path: '/', label: 'Dashboard', icon: <FaHome size={30} /> },
+        { path: '/properties', label: 'Properties', icon: <FaBuilding size={30} /> },
+        { path: '/clients', label: 'Clients', icon: <FaUsers size={30} /> },
+        { path: '/agents', label: 'Agents', icon: <FaUserTie size={30} /> },
+        { path: '/settings', label: 'Settings', icon: <FaCogs size={30} /> },
     ];
 
     return (
-        <div
-            className={`fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white p-6 z-30 transition-transform transform ${
-                isOpen ? 'translate-x-0' : '-translate-x-full'
-            } lg:translate-x-0`}
-        >
-            <h1 className="text-2xl font-bold mb-10">TIMMO Dashboard</h1>
-            <ul className="space-y-4">
-                {links.map(link => (
+        <div className="w-64 bg-primary h-screen p-4 text-white flex flex-col items-center">
+            {/* Logo Section */}
+            <div className="mb-8">
+                <img src="images/logo.png" alt="Logo" className="w-16 h-16" />
+            </div>
+
+            {/* Navigation Links */}
+            <ul className="space-y-8 w-full">
+                {links.map((link) => (
                     <li key={link.path}>
                         <NavLink
                             to={link.path}
-                            onClick={toggleSidebar}
                             className={({ isActive }) =>
-                                `block p-2 rounded text-lg font-medium ${
-                                    isActive ? 'bg-blue-700' : 'hover:bg-blue-800'
+                                `flex flex-col items-center text-center p-3 rounded-lg ${
+                                    isActive ? 'bg-accent text-black' : 'hover:bg-gray-700'
                                 }`
                             }
                         >
-                            {link.label}
+                            {link.icon}
+                            <span className="mt-2 text-sm">{link.label}</span>
                         </NavLink>
                     </li>
                 ))}
