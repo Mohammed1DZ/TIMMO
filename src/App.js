@@ -10,9 +10,9 @@ import Settings from './pages/Settings';
 function App() {
     return (
         <Router>
-            <div className="flex h-screen">
+            <div className="flex">
                 <Sidebar />
-                <div className="flex-1 p-4 bg-neutral">
+                <div className="flex-1 p-8 bg-gray-100 min-h-screen">
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/properties" element={<Properties />} />
