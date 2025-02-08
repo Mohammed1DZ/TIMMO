@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -10,7 +10,6 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const SWIPE_THRESHOLD = 50;
 
-    // Handle swipe gestures for touch devices
     const handleTouchStart = (e) => {
         setTouchStartX(e.touches[0].clientX);
     };
@@ -36,6 +35,19 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const toggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
+    };
+
+    const handleEdit = () => {
+        onEdit();
+        onClose();  // Automatically close the popup after editing
+    };
+
+    const handleDeleteConfirmation = () => {
+        const confirmed = window.confirm("Are you sure you want to delete this property?");
+        if (confirmed) {
+            onDelete();  // Proceed with deletion if confirmed
+            onClose();  // Close the popup after deletion
+        }
     };
 
     return (
@@ -91,8 +103,8 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                 )}
 
                 <div className="mt-4 flex justify-between">
-                    <button onClick={onEdit} className="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
-                    <button onClick={() => setShowDeleteConfirmation(true)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                    <button onClick={handleEdit} className="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
+                    <button onClick={handleDeleteConfirmation} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
                 </div>
             </div>
 
