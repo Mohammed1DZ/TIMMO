@@ -1,1 +1,0 @@
-// Netlify Function for User Authentication
