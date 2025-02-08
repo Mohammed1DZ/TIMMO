@@ -27,8 +27,10 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const handleTouchEnd = (e) => {
         const touchEndX = e.changedTouches[0].clientX;
-        if (touchStartX - touchEndX > 50) handleNextMedia(); // Swipe left
-        if (touchEndX - touchStartX > 50) handlePreviousMedia(); // Swipe right
+        const swipeDistance = touchStartX - touchEndX;
+
+        if (swipeDistance > 50) handleNextMedia();  // Swipe left
+        if (swipeDistance < -50) handlePreviousMedia();  // Swipe right
     };
 
     const handlePreviousMedia = () => {
