@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+    const [fullScreenMedia, setFullScreenMedia] = useState(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     if (!property) return null;
+
+    // Keyboard navigation for media
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') handlePreviousMedia();
+            if (e.key === 'ArrowRight') handleNextMedia();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [currentMediaIndex]);
 
     const handlePreviousMedia = () => {
         setCurrentMediaIndex((prev) => (prev === 0 ? property.media.length - 1 : prev - 1));
@@ -15,9 +28,21 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     };
 
     const handleDelete = () => {
-        onDelete(property.propertyId);  // Trigger delete
-        setShowDeleteConfirmation(false);
-        onClose();  // Close the modal after deleting
+        if (email === 'admin@example.com' && password === '123456') {
+            onDelete(property.propertyId);  // Trigger delete if credentials are valid
+            setShowDeleteConfirmation(false);
+            onClose();
+        } else {
+            alert('Invalid email or password.');
+        }
+    };
+
+    const openFullScreenMedia = (media) => {
+        setFullScreenMedia(media);
+    };
+
+    const closeFullScreenMedia = () => {
+        setFullScreenMedia(null);
     };
 
     return (
@@ -45,7 +70,10 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                         <h3 className="text-lg font-bold">Media</h3>
                         <div className="relative">
                             {/* Display image/video */}
-                            <div className="flex justify-center items-center">
+                            <div
+                                className="flex justify-center items-center cursor-pointer"
+                                onClick={() => openFullScreenMedia(property.media[currentMediaIndex])}
+                            >
                                 {property.media[currentMediaIndex].type.startsWith('image') ? (
                                     <img
                                         src={URL.createObjectURL(property.media[currentMediaIndex])}
@@ -94,19 +122,36 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
                     {/* Delete Button */}
                     {showDeleteConfirmation ? (
-                        <div className="flex space-x-2">
-                            <button
-                                onClick={handleDelete}
-                                className="bg-red-500 text-white px-4 py-2 rounded"
-                            >
-                                Confirm Delete
-                            </button>
-                            <button
-                                onClick={() => setShowDeleteConfirmation(false)}
-                                className="bg-gray-300 px-4 py-2 rounded"
-                            >
-                                Cancel
-                            </button>
+                        <div className="mt-4">
+                            <h3 className="font-bold mb-2">Confirm Deletion</h3>
+                            <input
+                                type="email"
+                                placeholder="Admin Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full p-2 border rounded mb-2"
+                            />
+                            <input
+                                type="password"
+                                placeholder="Admin Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-2 border rounded mb-2"
+                            />
+                            <div className="flex justify-between">
+                                <button
+                                    onClick={handleDelete}
+                                    className="bg-red-500 text-white px-4 py-2 rounded"
+                                >
+                                    Confirm Delete
+                                </button>
+                                <button
+                                    onClick={() => setShowDeleteConfirmation(false)}
+                                    className="bg-gray-300 px-4 py-2 rounded"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <button
@@ -118,6 +163,31 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                     )}
                 </div>
             </div>
+
+            {/* Full-screen media display */}
+            {fullScreenMedia && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+                    <button
+                        onClick={closeFullScreenMedia}
+                        className="absolute top-2 right-2 text-white text-2xl"
+                    >
+                        X
+                    </button>
+                    {fullScreenMedia.type.startsWith('image') ? (
+                        <img
+                            src={URL.createObjectURL(fullScreenMedia)}
+                            alt="Full screen media"
+                            className="w-auto max-h-full rounded"
+                        />
+                    ) : (
+                        <video
+                            src={URL.createObjectURL(fullScreenMedia)}
+                            controls
+                            className="w-auto max-h-full rounded"
+                        />
+                    )}
+                </div>
+            )}
         </div>
     );
 };
