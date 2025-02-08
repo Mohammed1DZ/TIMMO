@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const PropertyForm = () => {
+const PropertyForm = ({ onSubmit }) => {
     const [formData, setFormData] = useState({
         propertyId: '',
         title: '',
@@ -9,7 +9,7 @@ const PropertyForm = () => {
         price: '',
         location: '',
         status: 'Available',
-        media: []  // Store all selected media files here
+        media: []
     });
 
     const handleChange = (e) => {
@@ -17,21 +17,16 @@ const PropertyForm = () => {
     };
 
     const handleMediaUpload = (e) => {
-        const selectedFiles = Array.from(e.target.files);  // Get all selected files
+        const selectedFiles = Array.from(e.target.files);
         setFormData((prevState) => ({
             ...prevState,
-            media: [...prevState.media, ...selectedFiles]  // Append new files to the existing list
+            media: [...prevState.media, ...selectedFiles]
         }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Submitted Property:', formData);
-
-        if (formData.media.length > 0) {
-            console.log('Uploaded Media:', formData.media.map(file => file.name));
-        }
-
+        onSubmit(formData);  // Pass the new property data to the parent component
         alert('Property added successfully!');
         setFormData({
             propertyId: '',
@@ -60,7 +55,7 @@ const PropertyForm = () => {
                         required
                     />
                 </div>
-                
+
                 <div className="mb-4">
                     <label className="block mb-2">Title/Name</label>
                     <input
@@ -143,7 +138,7 @@ const PropertyForm = () => {
                     <input
                         type="file"
                         accept="image/*,video/*"
-                        multiple  // Allow multiple file selection
+                        multiple
                         onChange={handleMediaUpload}
                         className="w-full p-2 border rounded"
                     />
