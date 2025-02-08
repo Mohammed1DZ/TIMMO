@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 
 const PropertyDetailsModal = ({ property, onClose, onDelete }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [adminEmail, setAdminEmail] = useState('');
     const [adminPassword, setAdminPassword] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false);
+
+    const media = property.media;
+
+    // Navigation handlers
+    const handleNext = () => setCurrentIndex((prevIndex) => (prevIndex + 1) % media.length);
+    const handlePrevious = () => setCurrentIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
 
     const handleDelete = () => {
         if (adminEmail === 'admin@example.com' && adminPassword === 'password123') {
@@ -16,8 +23,8 @@ const PropertyDetailsModal = ({ property, onClose, onDelete }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded shadow-md w-full max-w-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded shadow-md w-full max-w-lg relative">
                 <h2 className="text-2xl font-bold mb-4">{property.title}</h2>
                 <p><strong>ID:</strong> {property.propertyId}</p>
                 <p><strong>Type:</strong> {property.type}</p>
@@ -26,29 +33,47 @@ const PropertyDetailsModal = ({ property, onClose, onDelete }) => {
                 <p><strong>Location:</strong> {property.location}</p>
                 <p><strong>Status:</strong> {property.status}</p>
 
-                {/* Media Display */}
-                {property.media.length > 0 && (
-                    <div className="mt-4">
-                        <h3 className="font-semibold">Media Files:</h3>
-                        <div className="grid grid-cols-2 gap-4 mt-2">
-                            {property.media.map((file, index) => (
-                                <div key={index}>
-                                    {file.type.startsWith('image') ? (
-                                        <img src={URL.createObjectURL(file)} alt={file.name} className="w-full h-32 object-cover rounded" />
-                                    ) : (
-                                        <video controls className="w-full h-32 object-cover rounded">
-                                            <source src={URL.createObjectURL(file)} type={file.type} />
-                                        </video>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                {/* Media Gallery */}
+                {media.length > 0 && (
+                    <div className="mt-6 relative">
+                        {media[currentIndex].type.startsWith('image') ? (
+                            <img
+                                src={URL.createObjectURL(media[currentIndex])}
+                                alt={media[currentIndex].name}
+                                className="w-full h-64 object-cover rounded"
+                            />
+                        ) : (
+                            <video controls className="w-full h-64 object-cover rounded">
+                                <source src={URL.createObjectURL(media[currentIndex])} type={media[currentIndex].type} />
+                            </video>
+                        )}
+
+                        {/* Navigation Arrows */}
+                        {media.length > 1 && (
+                            <>
+                                <button
+                                    onClick={handlePrevious}
+                                    className="absolute top-1/2 left-0 transform -translate-y-1/2 text-white bg-black bg-opacity-50 p-2 rounded-full"
+                                >
+                                    &#8592;
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    className="absolute top-1/2 right-0 transform -translate-y-1/2 text-white bg-black bg-opacity-50 p-2 rounded-full"
+                                >
+                                    &#8594;
+                                </button>
+                            </>
+                        )}
                     </div>
                 )}
 
                 {/* Edit and Delete Options */}
                 <div className="mt-6 flex justify-between">
-                    <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => alert('Edit functionality coming soon!')}>
+                    <button
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                        onClick={() => alert('Edit functionality coming soon!')}
+                    >
                         Edit
                     </button>
                     <button
