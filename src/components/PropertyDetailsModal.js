@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
+const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete, userRole }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
     const [isFullScreen, setIsFullScreen] = useState(false);
@@ -104,7 +104,11 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
                 <div className="mt-4 flex justify-between">
                     <button onClick={handleEdit} className="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
-                    <button onClick={handleDeleteConfirmation} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+
+                    {/* Conditionally render the Delete button for Super Admin and Admin */}
+                    {(userRole === 'Super Admin' || userRole === 'Admin') && (
+                        <button onClick={handleDeleteConfirmation} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                    )}
                 </div>
             </div>
 
