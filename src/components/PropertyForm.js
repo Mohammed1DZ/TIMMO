@@ -8,16 +8,26 @@ const PropertyForm = () => {
         category: 'For Sale',
         price: '',
         location: '',
-        status: 'Available'
+        status: 'Available',
+        image: null
     });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleImageUpload = (e) => {
+        setFormData({ ...formData, image: e.target.files[0] });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Submitted Property:', formData);
+
+        if (formData.image) {
+            console.log('Uploaded Image:', formData.image.name);
+        }
+
         alert('Property added successfully!');
         setFormData({
             propertyId: '',
@@ -26,7 +36,8 @@ const PropertyForm = () => {
             category: 'For Sale',
             price: '',
             location: '',
-            status: 'Available'
+            status: 'Available',
+            image: null
         });
     };
 
@@ -121,6 +132,19 @@ const PropertyForm = () => {
                         <option value="Sold">Sold</option>
                         <option value="Rented">Rented</option>
                     </select>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2">Property Image (Optional)</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="w-full p-2 border rounded"
+                    />
+                    {formData.image && (
+                        <p className="mt-2 text-sm text-gray-500">Selected file: {formData.image.name}</p>
+                    )}
                 </div>
 
                 <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
