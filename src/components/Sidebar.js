@@ -11,16 +11,16 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className="w-64 h-screen bg-primary p-6 text-white fixed">
-            <h1 className="text-3xl font-bold mb-8">TIMMO Dashboard</h1>
-            <ul className="space-y-6">
+        <nav className="w-64 h-screen bg-blue-900 text-white fixed p-6">
+            <h1 className="text-2xl font-bold mb-10">TIMMO Dashboard</h1>
+            <ul className="space-y-4">
                 {links.map(link => (
                     <li key={link.path}>
                         <NavLink 
                             to={link.path}
                             className={({ isActive }) =>
-                                `block p-3 rounded text-lg font-medium ${
-                                    isActive ? 'bg-accent' : 'hover:bg-accent'
+                                `block p-2 rounded text-lg font-medium ${
+                                    isActive ? 'bg-blue-700' : 'hover:bg-blue-800'
                                 }`
                             }
                         >
@@ -29,7 +29,7 @@ const Sidebar = () => {
                     </li>
                 ))}
             </ul>
-        </div>
+        </nav>
     );
 };
 
