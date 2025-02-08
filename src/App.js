@@ -25,7 +25,11 @@ function App() {
                 </button>
 
                 {/* Main content */}
-                <div className="flex-1 p-10 bg-gray-100 min-h-screen ml-0 lg:ml-64">
+                <div
+                    className={`flex-1 p-10 bg-gray-100 min-h-screen transition-all duration-300 ${
+                        sidebarOpen ? 'ml-64' : 'ml-0 lg:ml-64'
+                    }`}
+                >
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/properties" element={<Properties />} />
