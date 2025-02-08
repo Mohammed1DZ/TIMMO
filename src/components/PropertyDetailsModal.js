@@ -11,7 +11,10 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     if (!property) return null;
 
-    // Keyboard navigation for media
+    // Swipe detection using a threshold value (for touch devices)
+    const SWIPE_THRESHOLD = 50;
+
+    // Keyboard navigation for desktop users
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'ArrowLeft') handlePreviousMedia();
@@ -21,19 +24,19 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [currentMediaIndex]);
 
-    // Handle touch events for swipe navigation
+    // Handle swipe start (record initial touch position)
     const handleTouchStart = (e) => {
         setTouchStartX(e.touches[0].clientX);
     };
 
-    const handleTouchMove = (e) => {
-        setTouchEndX(e.touches[0].clientX);
-    };
+    // Handle swipe end (record final touch position and determine swipe direction)
+    const handleTouchEnd = (e) => {
+        setTouchEndX(e.changedTouches[0].clientX);
+        const swipeDistance = touchStartX - e.changedTouches[0].clientX;
 
-    const handleTouchEnd = () => {
-        if (touchStartX - touchEndX > 50) {
+        if (swipeDistance > SWIPE_THRESHOLD) {
             handleNextMedia();  // Swipe left
-        } else if (touchEndX - touchStartX > 50) {
+        } else if (swipeDistance < -SWIPE_THRESHOLD) {
             handlePreviousMedia();  // Swipe right
         }
     };
@@ -44,16 +47,6 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const handleNextMedia = () => {
         setCurrentMediaIndex((prev) => (prev === property.media.length - 1 ? 0 : prev + 1));
-    };
-
-    const handleDelete = () => {
-        if (email === 'admin@example.com' && password === '123456') {
-            onDelete(property.propertyId);
-            setShowDeleteConfirmation(false);
-            onClose();
-        } else {
-            alert('Invalid email or password.');
-        }
     };
 
     const openFullScreenMedia = (media) => {
@@ -67,14 +60,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
-                {/* X button to close */}
-                <button
-                    onClick={onClose}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
-                >
-                    X
-                </button>
-
+                <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-black">X</button>
                 <h2 className="text-2xl font-bold mb-4">{property.title}</h2>
                 <p><strong>ID:</strong> {property.propertyId}</p>
                 <p><strong>Type:</strong> {property.type}</p>
@@ -83,17 +69,14 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                 <p><strong>Location:</strong> {property.location}</p>
                 <p><strong>Status:</strong> {property.status}</p>
 
-                {/* Display media if available */}
                 {property.media && property.media.length > 0 && (
                     <div className="mt-4">
                         <h3 className="text-lg font-bold">Media</h3>
                         <div
                             className="relative"
                             onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
                         >
-                            {/* Display image/video */}
                             <div
                                 className="flex justify-center items-center cursor-pointer"
                                 onClick={() => openFullScreenMedia(property.media[currentMediaIndex])}
@@ -113,102 +96,27 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                                 )}
                             </div>
 
-                            {/* Media navigation */}
                             <div className="flex justify-between mt-2">
-                                <button
-                                    onClick={handlePreviousMedia}
-                                    className="bg-gray-300 p-2 rounded"
-                                >
-                                    &#8592; Previous
-                                </button>
-                                <button
-                                    onClick={handleNextMedia}
-                                    className="bg-gray-300 p-2 rounded"
-                                >
-                                    Next &#8594;
-                                </button>
+                                <button onClick={handlePreviousMedia} className="bg-gray-300 p-2 rounded">&#8592; Previous</button>
+                                <button onClick={handleNextMedia} className="bg-gray-300 p-2 rounded">Next &#8594;</button>
                             </div>
                         </div>
                     </div>
                 )}
 
                 <div className="mt-4 flex justify-between">
-                    {/* Edit Button */}
-                    <button
-                        onClick={() => {
-                            onEdit();
-                            onClose();  // Close the modal when switching to edit
-                        }}
-                        className="bg-green-500 text-white px-4 py-2 rounded"
-                    >
-                        Edit
-                    </button>
-
-                    {/* Delete Button */}
-                    {showDeleteConfirmation ? (
-                        <div className="mt-4">
-                            <h3 className="font-bold mb-2">Confirm Deletion</h3>
-                            <input
-                                type="email"
-                                placeholder="Admin Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-2 border rounded mb-2"
-                            />
-                            <input
-                                type="password"
-                                placeholder="Admin Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-2 border rounded mb-2"
-                            />
-                            <div className="flex justify-between">
-                                <button
-                                    onClick={handleDelete}
-                                    className="bg-red-500 text-white px-4 py-2 rounded"
-                                >
-                                    Confirm Delete
-                                </button>
-                                <button
-                                    onClick={() => setShowDeleteConfirmation(false)}
-                                    className="bg-gray-300 px-4 py-2 rounded"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <button
-                            onClick={() => setShowDeleteConfirmation(true)}
-                            className="bg-red-500 text-white px-4 py-2 rounded"
-                        >
-                            Delete
-                        </button>
-                    )}
+                    <button onClick={onEdit} className="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
+                    <button onClick={() => setShowDeleteConfirmation(true)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
                 </div>
             </div>
 
-            {/* Full-screen media display */}
             {fullScreenMedia && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-                    <button
-                        onClick={closeFullScreenMedia}
-                        className="absolute top-2 right-2 text-white text-2xl"
-                    >
-                        X
-                    </button>
+                    <button onClick={closeFullScreenMedia} className="absolute top-2 right-2 text-white text-2xl">X</button>
                     {fullScreenMedia.type.startsWith('image') ? (
-                        <img
-                            src={URL.createObjectURL(fullScreenMedia)}
-                            alt="Full screen media"
-                            className="w-auto max-h-full rounded"
-                        />
+                        <img src={URL.createObjectURL(fullScreenMedia)} alt="Full screen media" className="w-auto max-h-full rounded" />
                     ) : (
-                        <video
-                            src={URL.createObjectURL(fullScreenMedia)}
-                            controls
-                            className="w-auto max-h-full rounded"
-                        />
+                        <video src={URL.createObjectURL(fullScreenMedia)} controls className="w-auto max-h-full rounded" />
                     )}
                 </div>
             )}
