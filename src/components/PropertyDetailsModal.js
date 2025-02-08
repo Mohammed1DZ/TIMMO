@@ -3,28 +3,26 @@ import React, { useState, useEffect } from 'react';
 const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const [touchStartX, setTouchStartX] = useState(0);
-    const [touchEndX, setTouchEndX] = useState(0);
 
     if (!property) return null;
 
     const SWIPE_THRESHOLD = 50;
 
-    // Handle touch gestures for swipe navigation
+    // Handle swipe gestures for touch devices
     const handleTouchStart = (e) => {
         setTouchStartX(e.touches[0].clientX);
     };
 
     const handleTouchEnd = (e) => {
-        setTouchEndX(e.changedTouches[0].clientX);
+        const touchEndX = e.changedTouches[0].clientX;
         const swipeDistance = touchStartX - touchEndX;
 
         if (swipeDistance > SWIPE_THRESHOLD) {
-            handleNextMedia();  // Swipe left for next
+            handleNextMedia(); // Swipe left
         } else if (swipeDistance < -SWIPE_THRESHOLD) {
-            handlePreviousMedia();  // Swipe right for previous
+            handlePreviousMedia(); // Swipe right
         }
     };
 
@@ -34,6 +32,10 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const handleNextMedia = () => {
         setCurrentMediaIndex((prev) => (prev === property.media.length - 1 ? 0 : prev + 1));
+    };
+
+    const toggleFullScreen = () => {
+        setIsFullScreen(!isFullScreen);
     };
 
     return (
@@ -48,11 +50,13 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                 <p><strong>Location:</strong> {property.location}</p>
                 <p><strong>Status:</strong> {property.status}</p>
 
+                {/* Media Section */}
                 {property.media && property.media.length > 0 && (
                     <div className="relative w-full h-64 flex justify-center items-center">
                         <div
                             className="relative w-full h-full cursor-pointer"
-                            onClick={handleTouchStart}
+                            onClick={toggleFullScreen}
+                            onTouchStart={handleTouchStart}
                             onTouchEnd={handleTouchEnd}
                         >
                             {property.media[currentMediaIndex].type.startsWith('image') ? (
@@ -70,18 +74,16 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                             )}
                         </div>
 
-                        {/* Previous Arrow */}
+                        {/* Navigation Arrows */}
                         <button
                             onClick={handlePreviousMedia}
-                            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
                         >
                             &#10094;
                         </button>
-
-                        {/* Next Arrow */}
                         <button
                             onClick={handleNextMedia}
-                            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
                         >
                             &#10095;
                         </button>
@@ -95,9 +97,9 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
             </div>
 
             {/* Full-Screen Media Viewer */}
-            {property.media && (
+            {isFullScreen && (
                 <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center">
-                    <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">X</button>
+                    <button onClick={toggleFullScreen} className="absolute top-2 right-2 text-white text-2xl">X</button>
 
                     {property.media[currentMediaIndex].type.startsWith('image') ? (
                         <img
@@ -117,16 +119,16 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                         />
                     )}
 
-                    {/* Navigation arrows in full-screen */}
+                    {/* Navigation Arrows */}
                     <button
                         onClick={handlePreviousMedia}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
                     >
                         &#10094;
                     </button>
                     <button
                         onClick={handleNextMedia}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
                     >
                         &#10095;
                     </button>
