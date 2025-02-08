@@ -6,6 +6,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [fullScreenMedia, setFullScreenMedia] = useState(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [touchStartX, setTouchStartX] = useState(0);
 
     if (!property) return null;
 
@@ -19,6 +20,17 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [currentMediaIndex]);
 
+    // Swipe navigation for touch devices
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) handleNextMedia(); // Swipe left
+        if (touchEndX - touchStartX > 50) handlePreviousMedia(); // Swipe right
+    };
+
     const handlePreviousMedia = () => {
         setCurrentMediaIndex((prev) => (prev === 0 ? property.media.length - 1 : prev - 1));
     };
@@ -29,7 +41,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const handleDelete = () => {
         if (email === 'admin@example.com' && password === '123456') {
-            onDelete(property.propertyId);  // Trigger delete if credentials are valid
+            onDelete(property.propertyId);
             setShowDeleteConfirmation(false);
             onClose();
         } else {
@@ -68,7 +80,11 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                 {property.media && property.media.length > 0 && (
                     <div className="mt-4">
                         <h3 className="text-lg font-bold">Media</h3>
-                        <div className="relative">
+                        <div
+                            className="relative"
+                            onTouchStart={handleTouchStart}
+                            onTouchEnd={handleTouchEnd}
+                        >
                             {/* Display image/video */}
                             <div
                                 className="flex justify-center items-center cursor-pointer"
