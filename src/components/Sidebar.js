@@ -15,7 +15,7 @@ const Sidebar = () => {
         <div className="w-64 bg-primary h-screen p-4 text-white flex flex-col items-center">
             {/* Logo Section */}
             <div className="mb-8">
-                <img src="images/logo.png" alt="Logo" className="w-16 h-16" />
+                <img src="src/images/logo.png" alt="Logo" className="w-16 h-16" />
             </div>
 
             {/* Navigation Links */}
@@ -23,13 +23,15 @@ const Sidebar = () => {
                 {links.map((link) => (
                     <li key={link.path}>
                         <NavLink
-                            to={link.path}
-                            className={({ isActive }) =>
-                                `flex flex-col items-center text-center p-3 rounded-lg ${
-                                    isActive ? 'bg-accent text-black' : 'hover:bg-gray-700'
-                                }`
-                            }
-                        >
+    to={link.path}
+    className={({ isActive }) =>
+        `flex flex-col items-center text-center p-3 rounded-lg transition-colors duration-300 ${
+            isActive
+                ? 'bg-accent text-black'  // Active state (highlighted background and black text)
+                : 'text-gray-300 hover:text-white hover:bg-gray-700'  // Inactive state with hover effect
+        }`
+    }
+>
                             {link.icon}
                             <span className="mt-2 text-sm">{link.label}</span>
                         </NavLink>
