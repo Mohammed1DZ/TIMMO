@@ -3,11 +3,30 @@ import React, { useState, useEffect } from 'react';
 const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-    const [fullScreenMedia, setFullScreenMedia] = useState(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
 
     if (!property) return null;
+
+    const SWIPE_THRESHOLD = 50;
+
+    // Handle touch gestures for swipe navigation
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+        setTouchEndX(e.changedTouches[0].clientX);
+        const swipeDistance = touchStartX - touchEndX;
+
+        if (swipeDistance > SWIPE_THRESHOLD) {
+            handleNextMedia();  // Swipe left for next
+        } else if (swipeDistance < -SWIPE_THRESHOLD) {
+            handlePreviousMedia();  // Swipe right for previous
+        }
+    };
 
     const handlePreviousMedia = () => {
         setCurrentMediaIndex((prev) => (prev === 0 ? property.media.length - 1 : prev - 1));
@@ -15,14 +34,6 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
     const handleNextMedia = () => {
         setCurrentMediaIndex((prev) => (prev === property.media.length - 1 ? 0 : prev + 1));
-    };
-
-    const openFullScreenMedia = (media) => {
-        setFullScreenMedia(media);
-    };
-
-    const closeFullScreenMedia = () => {
-        setFullScreenMedia(null);
     };
 
     return (
@@ -39,10 +50,10 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
                 {property.media && property.media.length > 0 && (
                     <div className="relative w-full h-64 flex justify-center items-center">
-                        {/* Media */}
                         <div
                             className="relative w-full h-full cursor-pointer"
-                            onClick={() => openFullScreenMedia(property.media[currentMediaIndex])}
+                            onClick={handleTouchStart}
+                            onTouchEnd={handleTouchEnd}
                         >
                             {property.media[currentMediaIndex].type.startsWith('image') ? (
                                 <img
@@ -83,25 +94,39 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                 </div>
             </div>
 
-            {fullScreenMedia && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-                    <button onClick={closeFullScreenMedia} className="absolute top-2 right-2 text-white text-2xl">X</button>
-                    {fullScreenMedia.type.startsWith('image') ? (
-                        <img src={URL.createObjectURL(fullScreenMedia)} alt="Full screen media" className="w-auto max-h-full rounded" />
+            {/* Full-Screen Media Viewer */}
+            {property.media && (
+                <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center">
+                    <button onClick={onClose} className="absolute top-2 right-2 text-white text-2xl">X</button>
+
+                    {property.media[currentMediaIndex].type.startsWith('image') ? (
+                        <img
+                            src={URL.createObjectURL(property.media[currentMediaIndex])}
+                            alt="Full screen media"
+                            className="w-auto max-h-full rounded"
+                            onTouchStart={handleTouchStart}
+                            onTouchEnd={handleTouchEnd}
+                        />
                     ) : (
-                        <video src={URL.createObjectURL(fullScreenMedia)} controls className="w-auto max-h-full rounded" />
+                        <video
+                            src={URL.createObjectURL(property.media[currentMediaIndex])}
+                            controls
+                            className="w-auto max-h-full rounded"
+                            onTouchStart={handleTouchStart}
+                            onTouchEnd={handleTouchEnd}
+                        />
                     )}
 
-                    {/* Previous and Next arrows in fullscreen */}
+                    {/* Navigation arrows in full-screen */}
                     <button
                         onClick={handlePreviousMedia}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
                     >
                         &#10094;
                     </button>
                     <button
                         onClick={handleNextMedia}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100 focus:outline-none"
                     >
                         &#10095;
                     </button>
