@@ -5,6 +5,7 @@ const PropertyForm = () => {
         propertyId: '',
         title: '',
         type: 'Residential',
+        category: 'For Sale',
         price: '',
         location: '',
         status: 'Available'
@@ -22,6 +23,7 @@ const PropertyForm = () => {
             propertyId: '',
             title: '',
             type: 'Residential',
+            category: 'For Sale',
             price: '',
             location: '',
             status: 'Available'
@@ -71,6 +73,20 @@ const PropertyForm = () => {
                 </div>
 
                 <div className="mb-4">
+                    <label className="block mb-2">Category</label>
+                    <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="For Sale">For Sale</option>
+                        <option value="For Rent">For Rent</option>
+                        <option value="For Sale and Rent">For Sale and Rent</option>
+                    </select>
+                </div>
+
+                <div className="mb-4">
                     <label className="block mb-2">Price</label>
                     <input
                         type="number"
@@ -103,6 +119,7 @@ const PropertyForm = () => {
                     >
                         <option value="Available">Available</option>
                         <option value="Sold">Sold</option>
+                        <option value="Rented">Rented</option>
                     </select>
                 </div>
 
