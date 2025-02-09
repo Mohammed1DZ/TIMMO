@@ -22,7 +22,7 @@ const ClientForm = ({ addClient }) => {
         setClientData({ ...clientData, [name]: value });
 
         if (name === 'clientType') {
-            setIsOwner(value.includes('Owner'));
+            setIsOwner(value === 'Landlord' || value === 'Renter-Owner');
         }
     };
 
@@ -76,6 +76,7 @@ const ClientForm = ({ addClient }) => {
                     <option value="Seller">Seller</option>
                     <option value="Buyer">Buyer</option>
                     <option value="Renter (Looking for Property)">Renter (Seeker)</option>
+<option value="Landlord">Landlord</option>  {/* Considered an owner */}
                 </select>
             </div>
 
