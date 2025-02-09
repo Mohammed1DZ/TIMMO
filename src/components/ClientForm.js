@@ -9,7 +9,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         source: '',
     });
 
-    const [isOwner, setIsOwner] = useState(false);  // To control property form visibility
+    const [isOwner, setIsOwner] = useState(false);
     const [propertyData, setPropertyData] = useState({
         propertyId: '',
         propertyType: '',
@@ -23,9 +23,9 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         const { name, value } = e.target;
         setClientData({ ...clientData, [name]: value });
 
-        // Check if the client type is an owner (Landlord/Renter-Owner)
+        // Include Sellers, Landlords, and Renter-Owners as owners
         if (name === 'clientType') {
-            setIsOwner(value === 'Landlord' || value === 'Renter-Owner');
+            setIsOwner(value === 'Seller' || value === 'Landlord' || value === 'Renter-Owner');
         }
     };
 
@@ -35,12 +35,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         setPropertyData({ ...propertyData, [name]: value });
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmitClient(clientData);  // Submit client data
+        onSubmitClient(clientData);
 
-        // If the client is an owner, submit the property data as well
         if (isOwner) {
             onSubmitProperty(propertyData);
         }
@@ -65,7 +63,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2 mx-auto">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
             <div className="mb-4">
@@ -102,9 +100,9 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 >
                     <option value="Buyer">Buyer</option>
                     <option value="Renter">Renter</option>
-                    <option value="Seller">Seller</option>  {/* Treated separately */}
-                    <option value="Landlord">Landlord</option>  {/* Considered an owner */}
-                    <option value="Renter-Owner">Renter-Owner</option>  {/* Considered an owner */}
+                    <option value="Seller">Seller</option>  {/* Considered owner now */}
+                    <option value="Landlord">Landlord</option>  {/* Considered owner */}
+                    <option value="Renter-Owner">Renter-Owner</option>  {/* Considered owner */}
                 </select>
             </div>
 
@@ -124,7 +122,6 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 </select>
             </div>
 
-            {/* Show property form only if client is an owner */}
             {isOwner && (
                 <>
                     <h3 className="text-xl font-bold mt-6 mb-4">Property Details</h3>
@@ -181,7 +178,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 </>
             )}
 
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+            <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
                 Submit Client
             </button>
         </form>
