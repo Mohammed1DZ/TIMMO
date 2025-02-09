@@ -17,7 +17,6 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         const { name, value } = e.target;
         setClientData({ ...clientData, [name]: value });
 
-        // Show property form based on client type
         if (name === 'type') {
             const ownerTypes = ['Seller', 'Renter (Owner)', 'Landlord'];
             setShowPropertyForm(ownerTypes.includes(value));
@@ -27,18 +26,15 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Submit the client
         onSubmitClient(clientData);
 
-        // Submit property if client is an owner
         if (showPropertyForm && propertyData) {
             onSubmitProperty({
                 ...propertyData,
-                owner: clientData.name,  // Link property to client
+                owner: clientData.name,
             });
         }
 
-        // Reset forms
         setClientData({
             id: '',
             name: '',
@@ -46,15 +42,14 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             contactInfo: '',
             source: 'Facebook',
         });
-        setShowPropertyForm(false);
         setPropertyData(null);
+        setShowPropertyForm(false);
     };
 
     return (
         <form onSubmit={handleSubmit} className="p-6 border rounded shadow-md bg-white">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
-            {/* Client Fields */}
             <div className="mb-4">
                 <label className="block font-semibold mb-2">Client ID</label>
                 <input
@@ -63,7 +58,6 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                     value={clientData.id}
                     onChange={handleClientChange}
                     className="w-full p-2 border rounded"
-                    placeholder="Unique ID"
                     required
                 />
             </div>
@@ -76,7 +70,6 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                     value={clientData.name}
                     onChange={handleClientChange}
                     className="w-full p-2 border rounded"
-                    placeholder="Enter Client Name"
                     required
                 />
             </div>
@@ -97,50 +90,14 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 </select>
             </div>
 
-            <div className="mb-4">
-                <label className="block font-semibold mb-2">Contact Information</label>
-                <input
-                    type="text"
-                    name="contactInfo"
-                    value={clientData.contactInfo}
-                    onChange={handleClientChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Phone or Email"
-                    required
-                />
-            </div>
-
-            <div className="mb-4">
-                <label className="block font-semibold mb-2">Source of Information</label>
-                <select
-                    name="source"
-                    value={clientData.source}
-                    onChange={handleClientChange}
-                    className="w-full p-2 border rounded"
-                >
-                    <option value="Facebook">Facebook</option>
-                    <option value="Agent">Agent</option>
-                    <option value="Collaborators">Collaborators</option>
-                    <option value="Business Card">Business Card</option>
-                    <option value="Phone Calls">Phone Calls</option>
-                </select>
-            </div>
-
-            {/* Conditionally show the property form */}
             {showPropertyForm && (
-                <div className="p-4 border rounded bg-gray-50 mt-4">
-                    <h3 className="text-lg font-bold mb-4">Property Details</h3>
-                    <PropertyForm
-                        onSubmit={(property) => setPropertyData(property)}
-                    />
+                <div className="mt-4 p-4 border rounded bg-gray-50">
+                    <h3 className="font-bold text-lg">Property Details</h3>
+                    <PropertyForm onPropertyDataChange={setPropertyData} />
                 </div>
             )}
 
-            {/* Single Submit Button */}
-            <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4"
-            >
+            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4">
                 Submit Client and Property
             </button>
         </form>
