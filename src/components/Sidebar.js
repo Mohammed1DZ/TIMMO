@@ -12,14 +12,14 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className="w-36 bg-primary h-screen p-2 text-white flex flex-col items-center">
+        <div className="w-36 bg-primary h-screen p-2 md:p-4 lg:p-6 text-white flex flex-col items-center">
             {/* Logo Section */}
             <div className="mb-12">
                 <img src="src/images/logo.png" alt="Logo" className="w-20 h-20" />
             </div>
 
             {/* Navigation Links */}
-            <ul className="space-y-10 w-full">
+            <ul className="space-y-6 w-full">
                 {links.map((link) => (
                     <li key={link.path}>
                         <NavLink
