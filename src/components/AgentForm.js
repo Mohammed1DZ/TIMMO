@@ -26,6 +26,7 @@ const AgentForm = ({ onSubmit }) => {
         e.preventDefault();
         onSubmit(agentData);
 
+        // Reset form after submission
         setAgentData({
             agentId: uuidv4(),
             agentName: '',
@@ -42,7 +43,7 @@ const AgentForm = ({ onSubmit }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2 mx-auto">
             <h2 className="text-2xl font-bold mb-4">Add New Agent</h2>
 
             <div className="mb-4">
