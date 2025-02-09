@@ -18,14 +18,23 @@ const Agents = ({ agents, addAgent }) => {
                     ) : (
                         <ul>
                             {agents.map((agent, index) => (
-                                <li key={agent.agentId} className="p-2 border-b">
-                                    <strong>{index + 1}. {agent.agentName}</strong> — {agent.phoneNumber}  
-                                    <span className="block text-sm text-gray-600">
-                                        {agent.typeOfAgent} Agent | {agent.region}
-                                    </span>
-                                    <span className="block text-sm">
-                                        {agent.activeStatus ? "Active" : "Inactive"}
-                                    </span>
+                                <li key={agent.agentId} className="p-4 border-b flex items-center">
+                                    {agent.profilePicture && (
+                                        <img
+                                            src={agent.profilePicture}
+                                            alt={`${agent.agentName}'s Profile`}
+                                            className="w-16 h-16 object-cover rounded-full mr-4"
+                                        />
+                                    )}
+                                    <div>
+                                        <strong>{index + 1}. {agent.agentName}</strong> — {agent.phoneNumber}  
+                                        <span className="block text-sm text-gray-600">
+                                            {agent.typeOfAgent} Agent | {agent.region}
+                                        </span>
+                                        <span className="block text-sm">
+                                            {agent.activeStatus ? "Active" : "Inactive"}
+                                        </span>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
