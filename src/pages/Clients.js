@@ -1,48 +1,48 @@
-import React, { useState } from 'react';
-import ClientForm from '../components/ClientForm';
+import React from 'react';
+import AgentForm from '../components/AgentForm';
 
-const Clients = () => {
-    const [clients, setClients] = useState([]);
-
-    const handleAddClient = (newClient) => {
-        setClients([...clients, newClient]);
-    };
-
-    const handleAddProperty = (newProperty) => {
-        // This will automatically be reflected on the Properties Page through the global properties state.
-        console.log('Property added:', newProperty);
-    };
-
+const Agents = ({ agents, addAgent }) => {
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6">Clients Management</h1>
+        <div>
+            <h1 className="text-3xl font-bold mb-6">Manage Agents</h1>
 
-            {/* Form Section */}
-            <div className="mb-8">
-                <ClientForm onSubmitClient={handleAddClient} onSubmitProperty={handleAddProperty} />
-            </div>
+            {/* Agent Form */}
+            <AgentForm onSubmit={addAgent} />
 
-            {/* List of Clients */}
-            <div>
-                <h2 className="text-2xl font-semibold mb-4">Listed Clients</h2>
-                {clients.length === 0 ? (
-                    <p>No clients added yet.</p>
-                ) : (
-                    <ul className="space-y-4">
-                        {clients.map((client, index) => (
-                            <li key={index} className="p-4 border rounded bg-gray-100">
-                                <p><strong>ID:</strong> {client.id}</p>
-                                <p><strong>Name:</strong> {client.name}</p>
-                                <p><strong>Type:</strong> {client.type}</p>
-                                <p><strong>Contact:</strong> {client.contactInfo}</p>
-                                <p><strong>Source:</strong> {client.source}</p>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+            {/* Agent List */}
+            <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4">Agent List</h2>
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    {agents.length === 0 ? (
+                        <p className="text-gray-500">No agents added yet.</p>
+                    ) : (
+                        <ul>
+                            {agents.map((agent, index) => (
+                                <li key={agent.agentId} className="p-4 border-b flex items-center">
+                                    {agent.profilePicture && (
+                                        <img
+                                            src={agent.profilePicture}
+                                            alt={`${agent.agentName}'s Profile`}
+                                            className="w-16 h-16 object-cover rounded-full mr-4"
+                                        />
+                                    )}
+                                    <div>
+                                        <strong>{index + 1}. {agent.agentName}</strong> — {agent.phoneNumber}  
+                                        <span className="block text-sm text-gray-600">
+                                            {agent.typeOfAgent} Agent | {agent.region}
+                                        </span>
+                                        <span className="block text-sm">
+                                            {agent.activeStatus ? "Active" : "Inactive"}
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
 
-export default Clients;
+export default Agents;
