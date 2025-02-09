@@ -4,11 +4,11 @@ import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';
 
 const Sidebar = () => {
     const links = [
-        { path: '/', label: 'Dashboard', icon: <FaHome size={40} /> },
-        { path: '/properties', label: 'Properties', icon: <FaBuilding size={40} /> },
-        { path: '/clients', label: 'Clients', icon: <FaUsers size={40} /> },
-        { path: '/agents', label: 'Agents', icon: <FaUserTie size={40} /> },
-        { path: '/settings', label: 'Settings', icon: <FaCogs size={40} /> },
+        { path: '/', label: 'Dashboard', icon: <FaHome size={15} /> },
+        { path: '/properties', label: 'Properties', icon: <FaBuilding size={10} /> },
+        { path: '/clients', label: 'Clients', icon: <FaUsers size={10} /> },
+        { path: '/agents', label: 'Agents', icon: <FaUserTie size={10} /> },
+        { path: '/settings', label: 'Settings', icon: <FaCogs size={10} /> },
     ];
 
     return (
