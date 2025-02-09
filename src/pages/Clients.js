@@ -4,6 +4,13 @@ import ClientForm from '../components/ClientForm';
 const Clients = () => {
     const [clients, setClients] = useState([]);
 
+    // Dummy properties (replace this with actual property data)
+    const availableProperties = [
+        { id: 'P1', title: 'Modern Apartment', location: 'Downtown' },
+        { id: 'P2', title: 'Luxury Villa', location: 'Seaside' },
+        { id: 'P3', title: 'Office Space', location: 'Business District' },
+    ];
+
     const handleAddClient = (newClient) => {
         setClients([...clients, newClient]);
     };
@@ -14,7 +21,7 @@ const Clients = () => {
 
             {/* Form Section */}
             <div className="mb-8">
-                <ClientForm onSubmit={handleAddClient} />
+                <ClientForm onSubmit={handleAddClient} availableProperties={availableProperties} />
             </div>
 
             {/* List of Clients */}
@@ -31,6 +38,7 @@ const Clients = () => {
                                 <p><strong>Type:</strong> {client.type}</p>
                                 <p><strong>Contact:</strong> {client.contactInfo}</p>
                                 <p><strong>Source:</strong> {client.source}</p>
+                                <p><strong>Related Property:</strong> {client.propertyId ? client.propertyId : 'None'}</p>
                             </li>
                         ))}
                     </ul>
