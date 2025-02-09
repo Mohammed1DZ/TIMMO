@@ -5,9 +5,11 @@ import AgentDetailModal from '../components/AgentDetailModal';
 const Agents = () => {
     const [agents, setAgents] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState(null);
+    const [showFormModal, setShowFormModal] = useState(false);
 
     const addAgent = (newAgent) => {
         setAgents((prevAgents) => [...prevAgents, newAgent]);
+        setShowFormModal(false);  // Close the form modal after submission
     };
 
     const handleEditAgent = (updatedAgent) => {
@@ -28,11 +30,16 @@ const Agents = () => {
         <div>
             <h1 className="text-3xl font-bold mb-6">Manage Agents</h1>
 
-            {/* Agent Form */}
-            <AgentForm onSubmit={addAgent} />
+            {/* Add New Agent Button */}
+            <button
+                onClick={() => setShowFormModal(true)}
+                className="bg-blue-500 text-white p-2 rounded mb-4"
+            >
+                Add New Agent
+            </button>
 
             {/* Agent List */}
-            <div className="mt-8">
+            <div className="mt-4">
                 <h2 className="text-2xl font-bold mb-4">Agent List</h2>
                 <div className="bg-white p-4 rounded-lg shadow-md">
                     {agents.length === 0 ? (
@@ -52,6 +59,21 @@ const Agents = () => {
                     )}
                 </div>
             </div>
+
+            {/* Agent Form Modal */}
+            {showFormModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md relative">
+                        <button
+                            onClick={() => setShowFormModal(false)}
+                            className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                        >
+                            X
+                        </button>
+                        <AgentForm onSubmit={addAgent} />
+                    </div>
+                </div>
+            )}
 
             {/* Agent Detail Modal */}
             {selectedAgent && (
