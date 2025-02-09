@@ -3,6 +3,12 @@ import React, { useState } from 'react';
 const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...agent });
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [emailInput, setEmailInput] = useState('');
+    const [passwordInput, setPasswordInput] = useState('');
+    
+    const correctEmail = 'admin@example.com';  // Replace with actual admin email
+    const correctPassword = 'admin123';        // Replace with actual admin password
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -12,6 +18,15 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const handleSave = () => {
         onEdit(editData);
         setIsEditing(false);  // Exit edit mode after saving
+    };
+
+    const handleDeleteConfirmation = () => {
+        if (emailInput === correctEmail && passwordInput === correctPassword) {
+            onDelete(agent.agentId);
+        } else {
+            alert('Invalid email or password. Please try again.');
+        }
+        setShowConfirmDelete(false);
     };
 
     return (
@@ -96,10 +111,48 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                                 Edit
                             </button>
                             <button
-                                onClick={() => onDelete(agent.agentId)}
+                                onClick={() => setShowConfirmDelete(true)}
                                 className="bg-red-500 text-white p-2 rounded"
                             >
                                 Delete
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Delete Confirmation Modal */}
+                {showConfirmDelete && (
+                    <div className="mt-4 p-4 bg-gray-100 rounded shadow-md">
+                        <h3 className="text-lg font-bold mb-2">Confirm Deletion</h3>
+                        <p>Please enter the admin email and password to confirm deletion:</p>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={emailInput}
+                            onChange={(e) => setEmailInput(e.target.value)}
+                            className="w-full p-2 border rounded mt-2"
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={passwordInput}
+                            onChange={(e) => setPasswordInput(e.target.value)}
+                            className="w-full p-2 border rounded mt-2"
+                            required
+                        />
+                        <div className="flex justify-end space-x-2 mt-4">
+                            <button
+                                onClick={handleDeleteConfirmation}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Confirm
+                            </button>
+                            <button
+                                onClick={() => setShowConfirmDelete(false)}
+                                className="bg-gray-300 p-2 rounded"
+                            >
+                                Cancel
                             </button>
                         </div>
                     </div>
