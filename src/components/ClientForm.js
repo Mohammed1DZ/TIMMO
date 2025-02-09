@@ -4,7 +4,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     const [clientData, setClientData] = useState({
         clientId: '',
         clientName: '',
-        clientType: 'Buyer',  // Default to Buyer
+        clientType: 'Buyer',
         phoneNumber: '',
         source: '',
     });
@@ -30,7 +30,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmitClient(clientData);
-        if (isOwner) onSubmitProperty(propertyData);
+
+        if (isOwner) {
+            onSubmitProperty(propertyData);
+        }
 
         setClientData({
             clientId: '',
@@ -51,8 +54,8 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-4 md:p-6 rounded-lg shadow-md w-full max-w-md md:max-w-3xl lg:max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Add New Client</h2>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
             <div className="mb-4">
                 <label className="block text-gray-700">Client Name</label>
@@ -120,7 +123,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                             type="text"
                             name="propertyType"
                             value={propertyData.propertyType}
-                            onChange={handlePropertyChange}
+                            onChange={handleClientChange}
                             className="w-full p-2 border rounded"
                             required
                         />
@@ -132,36 +135,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                             type="text"
                             name="location"
                             value={propertyData.location}
-                            onChange={handlePropertyChange}
+                            onChange={handleClientChange}
                             className="w-full p-2 border rounded"
                             required
                         />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Price</label>
-                        <input
-                            type="number"
-                            name="price"
-                            value={propertyData.price}
-                            onChange={handlePropertyChange}
-                            className="w-full p-2 border rounded"
-                            required
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Status</label>
-                        <select
-                            name="status"
-                            value={propertyData.status}
-                            onChange={handlePropertyChange}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="Available">Available</option>
-                            <option value="Sold">Sold</option>
-                            <option value="Rented">Rented</option>
-                        </select>
                     </div>
                 </>
             )}
