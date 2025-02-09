@@ -3,16 +3,14 @@ import ClientForm from '../components/ClientForm';
 
 const Clients = () => {
     const [clients, setClients] = useState([]);
-
-    // Dummy properties (replace this with actual property data)
-    const availableProperties = [
-        { id: 'P1', title: 'Modern Apartment', location: 'Downtown' },
-        { id: 'P2', title: 'Luxury Villa', location: 'Seaside' },
-        { id: 'P3', title: 'Office Space', location: 'Business District' },
-    ];
+    const [properties, setProperties] = useState([]);
 
     const handleAddClient = (newClient) => {
         setClients([...clients, newClient]);
+    };
+
+    const handleAddProperty = (newProperty) => {
+        setProperties([...properties, newProperty]);
     };
 
     return (
@@ -21,7 +19,7 @@ const Clients = () => {
 
             {/* Form Section */}
             <div className="mb-8">
-                <ClientForm onSubmit={handleAddClient} availableProperties={availableProperties} />
+                <ClientForm onSubmitClient={handleAddClient} onSubmitProperty={handleAddProperty} />
             </div>
 
             {/* List of Clients */}
@@ -38,7 +36,29 @@ const Clients = () => {
                                 <p><strong>Type:</strong> {client.type}</p>
                                 <p><strong>Contact:</strong> {client.contactInfo}</p>
                                 <p><strong>Source:</strong> {client.source}</p>
-                                <p><strong>Related Property:</strong> {client.propertyId ? client.propertyId : 'None'}</p>
+                                <p><strong>Is Owner:</strong> {client.isOwner ? 'Yes' : 'No'}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            {/* List of Properties (For reference) */}
+            <div className="mt-8">
+                <h2 className="text-2xl font-semibold mb-4">Listed Properties</h2>
+                {properties.length === 0 ? (
+                    <p>No properties added yet.</p>
+                ) : (
+                    <ul className="space-y-4">
+                        {properties.map((property, index) => (
+                            <li key={index} className="p-4 border rounded bg-gray-100">
+                                <p><strong>ID:</strong> {property.propertyId}</p>
+                                <p><strong>Title:</strong> {property.title}</p>
+                                <p><strong>Type:</strong> {property.type}</p>
+                                <p><strong>Category:</strong> {property.category}</p>
+                                <p><strong>Price:</strong> ${property.price}</p>
+                                <p><strong>Location:</strong> {property.location}</p>
+                                <p><strong>Status:</strong> {property.status}</p>
                             </li>
                         ))}
                     </ul>
