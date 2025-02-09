@@ -43,8 +43,8 @@ const AgentForm = ({ onSubmit }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2 mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Add New Agent</h2>
+        <form onSubmit={handleSubmit} className="bg-white p-4 md:p-6 rounded-lg shadow-md w-full max-w-md md:max-w-3xl lg:max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Add New Agent</h2>
 
             <div className="mb-4">
                 <label className="block text-gray-700">Agent Name</label>
