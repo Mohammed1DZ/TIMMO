@@ -18,32 +18,20 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         status: 'Available',
     });
 
-    // Update client data on change
     const handleClientChange = (e) => {
         const { name, value } = e.target;
         setClientData({ ...clientData, [name]: value });
 
-        // Include Sellers, Landlords, and Renter-Owners as owners
         if (name === 'clientType') {
             setIsOwner(value === 'Seller' || value === 'Landlord' || value === 'Renter-Owner');
         }
     };
 
-    // Update property data on change
-    const handlePropertyChange = (e) => {
-        const { name, value } = e.target;
-        setPropertyData({ ...propertyData, [name]: value });
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmitClient(clientData);
+        if (isOwner) onSubmitProperty(propertyData);
 
-        if (isOwner) {
-            onSubmitProperty(propertyData);
-        }
-
-        // Reset forms
         setClientData({
             clientId: '',
             clientName: '',
@@ -63,8 +51,8 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2 mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
+        <form onSubmit={handleSubmit} className="bg-white p-4 md:p-6 rounded-lg shadow-md w-full max-w-md md:max-w-3xl lg:max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Add New Client</h2>
 
             <div className="mb-4">
                 <label className="block text-gray-700">Client Name</label>
@@ -100,9 +88,9 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 >
                     <option value="Buyer">Buyer</option>
                     <option value="Renter">Renter</option>
-                    <option value="Seller">Seller</option>  {/* Considered owner now */}
-                    <option value="Landlord">Landlord</option>  {/* Considered owner */}
-                    <option value="Renter-Owner">Renter-Owner</option>  {/* Considered owner */}
+                    <option value="Seller">Seller</option>
+                    <option value="Landlord">Landlord</option>
+                    <option value="Renter-Owner">Renter-Owner</option>
                 </select>
             </div>
 
