@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';  // Icons
-import Logo from 'src/images/logo1.png';  // Correctly import the logo
+import Logo from 'images/logo1.png';  // Correctly import the logo
 
 const Sidebar = () => {
     const links = [
