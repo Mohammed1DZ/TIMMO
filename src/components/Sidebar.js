@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';  // Icons
+import Logo from 'src/images/logo1.png';  // Correctly import the logo
 
 const Sidebar = () => {
     const links = [
@@ -15,7 +16,7 @@ const Sidebar = () => {
         <div className="w-35 md:w-24 lg:w-35 bg-primary h-screen p-2 md:p-4 lg:p-4 text-white flex flex-col items-center">
             {/* Logo Section */}
             <div className="mb-8">
-                <img src="src/images/logo1.png" alt="Logo" className="w-16 md:w-20 lg:w-24" />
+                <img src={Logo} alt="Logo" className="w-16 md:w-20 lg:w-24" />
             </div>
 
             {/* Navigation Links */}
