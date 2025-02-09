@@ -3,16 +3,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 const AgentForm = ({ onSubmit }) => {
     const [agentData, setAgentData] = useState({
-        agentId: uuidv4(),  // Auto-generate unique ID
+        agentId: uuidv4(),
         agentName: '',
         phoneNumber: '',
         email: '',
-        typeOfAgent: 'Inside',  // Default value
+        typeOfAgent: 'Inside',
         yearsOfExperience: '',
         region: '',
         activeStatus: true,
         notes: '',
+        profilePicture: '',  // Store the profile picture URL
     });
+
+    const [previewImage, setPreviewImage] = useState(null);  // Preview before submitting
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -22,11 +25,23 @@ const AgentForm = ({ onSubmit }) => {
         });
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+                setAgentData({ ...agentData, profilePicture: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(agentData);
 
-        // Clear form after submission
+        // Clear form
         setAgentData({
             agentId: uuidv4(),
             agentName: '',
@@ -37,7 +52,9 @@ const AgentForm = ({ onSubmit }) => {
             region: '',
             activeStatus: true,
             notes: '',
+            profilePicture: '',
         });
+        setPreviewImage(null);
 
         alert('Agent added successfully!');
     };
@@ -92,6 +109,23 @@ const AgentForm = ({ onSubmit }) => {
                     <option value="Inside">Inside</option>
                     <option value="Field">Field</option>
                 </select>
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Profile Picture</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full p-2 border rounded"
+                />
+                {previewImage && (
+                    <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="mt-4 w-24 h-24 object-cover rounded-full"
+                    />
+                )}
             </div>
 
             <div className="mb-4">
