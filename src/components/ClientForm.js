@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import PropertyForm from './PropertyForm';  // Import the PropertyForm
+import PropertyForm from './PropertyForm';
 
 const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
-    const [formData, setFormData] = useState({
+    const [clientData, setClientData] = useState({
         id: '',
         name: '',
         type: 'Buyer',
@@ -10,36 +10,36 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
         source: 'Facebook',
     });
 
-    const [showPropertyForm, setShowPropertyForm] = useState(false);
     const [propertyData, setPropertyData] = useState(null);
+    const [showPropertyForm, setShowPropertyForm] = useState(false);
 
-    const handleChange = (e) => {
+    const handleClientChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setClientData({ ...clientData, [name]: value });
 
-        // Determine if the client type is an owner and show the property form
+        // Show property form based on client type
         if (name === 'type') {
             const ownerTypes = ['Seller', 'Renter (Owner)', 'Landlord'];
             setShowPropertyForm(ownerTypes.includes(value));
         }
     };
 
-    const handleSubmitClientAndProperty = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Submit the client to the clients list
-        onSubmitClient(formData);
+        // Submit the client
+        onSubmitClient(clientData);
 
-        // If the client is an owner, submit the property to the properties list
+        // Submit property if client is an owner
         if (showPropertyForm && propertyData) {
             onSubmitProperty({
                 ...propertyData,
-                owner: formData.name,  // Link the property to the client
+                owner: clientData.name,  // Link property to client
             });
         }
 
-        // Reset the forms
-        setFormData({
+        // Reset forms
+        setClientData({
             id: '',
             name: '',
             type: 'Buyer',
@@ -51,17 +51,17 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     };
 
     return (
-        <form onSubmit={handleSubmitClientAndProperty} className="p-6 border rounded shadow-md bg-white">
+        <form onSubmit={handleSubmit} className="p-6 border rounded shadow-md bg-white">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
-            
-            {/* Client Form */}
+
+            {/* Client Fields */}
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="id">Client ID</label>
-                <input 
+                <label className="block font-semibold mb-2">Client ID</label>
+                <input
                     type="text"
                     name="id"
-                    value={formData.id}
-                    onChange={handleChange}
+                    value={clientData.id}
+                    onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                     placeholder="Unique ID"
                     required
@@ -69,12 +69,12 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="name">Client Name</label>
-                <input 
+                <label className="block font-semibold mb-2">Client Name</label>
+                <input
                     type="text"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
+                    value={clientData.name}
+                    onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                     placeholder="Enter Client Name"
                     required
@@ -82,11 +82,11 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="type">Client Type</label>
-                <select 
+                <label className="block font-semibold mb-2">Client Type</label>
+                <select
                     name="type"
-                    value={formData.type}
-                    onChange={handleChange}
+                    value={clientData.type}
+                    onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                 >
                     <option value="Buyer">Buyer</option>
@@ -98,12 +98,12 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="contactInfo">Contact Information</label>
-                <input 
+                <label className="block font-semibold mb-2">Contact Information</label>
+                <input
                     type="text"
                     name="contactInfo"
-                    value={formData.contactInfo}
-                    onChange={handleChange}
+                    value={clientData.contactInfo}
+                    onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                     placeholder="Phone or Email"
                     required
@@ -112,10 +112,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
 
             <div className="mb-4">
                 <label className="block font-semibold mb-2">Source of Information</label>
-                <select 
+                <select
                     name="source"
-                    value={formData.source}
-                    onChange={handleChange}
+                    value={clientData.source}
+                    onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                 >
                     <option value="Facebook">Facebook</option>
@@ -137,7 +137,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             )}
 
             {/* Single Submit Button */}
-            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4">
+            <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4"
+            >
                 Submit Client and Property
             </button>
         </form>
