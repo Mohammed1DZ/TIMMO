@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -8,6 +8,12 @@ import Agents from './pages/Agents';
 import Settings from './pages/Settings';
 
 function App() {
+    const [agents, setAgents] = useState([]);  // Centralized agent state
+
+    const addAgent = (newAgent) => {
+        setAgents((prevAgents) => [...prevAgents, newAgent]);
+    };
+
     return (
         <Router>
             <div className="flex h-screen">
@@ -20,7 +26,10 @@ function App() {
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/properties" element={<Properties />} />
                         <Route path="/clients" element={<Clients />} />
-                        <Route path="/agents" element={<Agents />} />
+                        <Route 
+                            path="/agents" 
+                            element={<Agents agents={agents} addAgent={addAgent} />} 
+                        />
                         <Route path="/settings" element={<Settings />} />
                     </Routes>
                 </div>
