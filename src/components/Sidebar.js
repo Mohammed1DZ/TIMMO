@@ -4,15 +4,15 @@ import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';
 
 const Sidebar = () => {
     const links = [
-        { path: '/', label: 'Dashboard', icon: <FaHome size={15} /> },
-        { path: '/properties', label: 'Properties', icon: <FaBuilding size={10} /> },
-        { path: '/clients', label: 'Clients', icon: <FaUsers size={10} /> },
-        { path: '/agents', label: 'Agents', icon: <FaUserTie size={10} /> },
-        { path: '/settings', label: 'Settings', icon: <FaCogs size={10} /> },
+        { path: '/', label: 'Dashboard', icon: <FaHome size={40} /> },
+        { path: '/properties', label: 'Properties', icon: <FaBuilding size={40} /> },
+        { path: '/clients', label: 'Clients', icon: <FaUsers size={40} /> },
+        { path: '/agents', label: 'Agents', icon: <FaUserTie size={40} /> },
+        { path: '/settings', label: 'Settings', icon: <FaCogs size={40} /> },
     ];
 
     return (
-        <div className="w-72 bg-primary h-screen p-6 text-white flex flex-col items-center">
+        <div className="w-36 bg-primary h-screen p-6 text-white flex flex-col items-center">
             {/* Logo Section */}
             <div className="mb-12">
                 <img src="src/images/logo.png" alt="Logo" className="w-20 h-20" />
