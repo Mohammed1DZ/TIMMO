@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropertyForm from './PropertyForm';  // Import the existing PropertyForm
+import PropertyForm from './PropertyForm';  // Import the PropertyForm
 
 const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     const [formData, setFormData] = useState({
@@ -11,20 +11,20 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     });
 
     const [showPropertyForm, setShowPropertyForm] = useState(false);
-    const [propertyData, setPropertyData] = useState(null);  // Store property data before submission
+    const [propertyData, setPropertyData] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
-        // Determine if the client type is an owner and show the property form accordingly
+        // Determine if the client type is an owner and show the property form
         if (name === 'type') {
             const ownerTypes = ['Seller', 'Renter (Owner)', 'Landlord'];
             setShowPropertyForm(ownerTypes.includes(value));
         }
     };
 
-    const handleSubmitClient = (e) => {
+    const handleSubmitClientAndProperty = (e) => {
         e.preventDefault();
 
         // Submit the client to the clients list
@@ -38,7 +38,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             });
         }
 
-        // Reset the form
+        // Reset the forms
         setFormData({
             id: '',
             name: '',
@@ -51,9 +51,10 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     };
 
     return (
-        <form onSubmit={handleSubmitClient} className="p-6 border rounded shadow-md bg-white">
+        <form onSubmit={handleSubmitClientAndProperty} className="p-6 border rounded shadow-md bg-white">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
             
+            {/* Client Form */}
             <div className="mb-4">
                 <label className="block font-semibold mb-2" htmlFor="id">Client ID</label>
                 <input 
@@ -125,7 +126,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 </select>
             </div>
 
-            {/* Conditionally show the property form if the client is an owner */}
+            {/* Conditionally show the property form */}
             {showPropertyForm && (
                 <div className="p-4 border rounded bg-gray-50 mt-4">
                     <h3 className="text-lg font-bold mb-4">Property Details</h3>
@@ -135,7 +136,8 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                 </div>
             )}
 
-            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            {/* Single Submit Button */}
+            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4">
                 Submit Client and Property
             </button>
         </form>
