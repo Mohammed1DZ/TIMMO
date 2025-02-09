@@ -3,14 +3,14 @@ import ClientForm from '../components/ClientForm';
 
 const Clients = () => {
     const [clients, setClients] = useState([]);
-    const [properties, setProperties] = useState([]);
 
     const handleAddClient = (newClient) => {
         setClients([...clients, newClient]);
     };
 
     const handleAddProperty = (newProperty) => {
-        setProperties([...properties, newProperty]);
+        // This will automatically be reflected on the Properties Page through the global properties state.
+        console.log('Property added:', newProperty);
     };
 
     return (
@@ -36,28 +36,6 @@ const Clients = () => {
                                 <p><strong>Type:</strong> {client.type}</p>
                                 <p><strong>Contact:</strong> {client.contactInfo}</p>
                                 <p><strong>Source:</strong> {client.source}</p>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
-
-            {/* List of Properties */}
-            <div className="mt-8">
-                <h2 className="text-2xl font-semibold mb-4">Listed Properties</h2>
-                {properties.length === 0 ? (
-                    <p>No properties added yet.</p>
-                ) : (
-                    <ul className="space-y-4">
-                        {properties.map((property, index) => (
-                            <li key={index} className="p-4 border rounded bg-gray-100">
-                                <p><strong>ID:</strong> {property.propertyId}</p>
-                                <p><strong>Title:</strong> {property.title}</p>
-                                <p><strong>Type:</strong> {property.type}</p>
-                                <p><strong>Category:</strong> {property.category}</p>
-                                <p><strong>Price:</strong> ${property.price}</p>
-                                <p><strong>Location:</strong> {property.location}</p>
-                                <p><strong>Status:</strong> {property.status}</p>
                             </li>
                         ))}
                     </ul>
