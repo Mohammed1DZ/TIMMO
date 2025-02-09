@@ -1,82 +1,78 @@
 import React, { useState } from 'react';
-import PropertyForm from './PropertyForm';
+import { v4 as uuidv4 } from 'uuid';
 
-const ClientForm = ({ addClient }) => {
-    const [clientData, setClientData] = useState({
-        clientId: '',
-        clientName: '',
-        clientType: 'Buyer',
+const AgentForm = ({ onSubmit }) => {
+    const [agentData, setAgentData] = useState({
+        agentId: uuidv4(),
+        agentName: '',
         phoneNumber: '',
-        source: 'Facebook',
-        preferredContact: '',
-        address: '',
-        budget: '',
+        email: '',
+        typeOfAgent: 'Inside',
+        yearsOfExperience: '',
+        region: '',
+        activeStatus: true,
         notes: '',
+        profilePicture: '',  // Store the image URL
     });
 
-    const [isOwner, setIsOwner] = useState(false);
-    const [propertyData, setPropertyData] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);  // For previewing the image before submission
 
-    const handleClientChange = (e) => {
-        const { name, value } = e.target;
-        setClientData({ ...clientData, [name]: value });
-
-        if (name === 'clientType') {
-            setIsOwner(value.includes('Owner'));
-        }
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setAgentData({
+            ...agentData,
+            [name]: type === 'checkbox' ? checked : value,
+        });
     };
 
-    const handlePropertySubmit = (property) => {
-        setPropertyData(property);
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+                setAgentData({ ...agentData, profilePicture: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addClient({ ...clientData, property: propertyData });
-        setClientData({
-            clientId: '',
-            clientName: '',
-            clientType: 'Buyer',
+        onSubmit(agentData);
+
+        // Clear form
+        setAgentData({
+            agentId: uuidv4(),
+            agentName: '',
             phoneNumber: '',
-            source: 'Facebook',
-            preferredContact: '',
-            address: '',
-            budget: '',
+            email: '',
+            typeOfAgent: 'Inside',
+            yearsOfExperience: '',
+            region: '',
+            activeStatus: true,
             notes: '',
+            profilePicture: '',
         });
-        setPropertyData(null);
-        alert('Client and property added successfully!');
+        setPreviewImage(null);
+
+        alert('Agent added successfully!');
     };
 
     return (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
+            <h2 className="text-2xl font-bold mb-4">Add New Agent</h2>
 
             <div className="mb-4">
-                <label className="block text-gray-700">Client Name</label>
+                <label className="block text-gray-700">Agent Name</label>
                 <input
                     type="text"
-                    name="clientName"
-                    value={clientData.clientName}
-                    onChange={handleClientChange}
+                    name="agentName"
+                    value={agentData.agentName}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded"
                     required
                 />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-700">Client Type</label>
-                <select
-                    name="clientType"
-                    value={clientData.clientType}
-                    onChange={handleClientChange}
-                    className="w-full p-2 border rounded"
-                >
-                    <option value="Renter (Owner of Property)">Renter (Owner)</option>
-                    <option value="Seller">Seller</option>
-                    <option value="Buyer">Buyer</option>
-                    <option value="Renter (Looking for Property)">Renter (Seeker)</option>
-                </select>
             </div>
 
             <div className="mb-4">
@@ -84,51 +80,104 @@ const ClientForm = ({ addClient }) => {
                 <input
                     type="tel"
                     name="phoneNumber"
-                    value={clientData.phoneNumber}
-                    onChange={handleClientChange}
+                    value={agentData.phoneNumber}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded"
                     required
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-700">Source of Information</label>
+                <label className="block text-gray-700">Email (Optional)</label>
+                <input
+                    type="email"
+                    name="email"
+                    value={agentData.email}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Type of Agent</label>
                 <select
-                    name="source"
-                    value={clientData.source}
-                    onChange={handleClientChange}
+                    name="typeOfAgent"
+                    value={agentData.typeOfAgent}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded"
                 >
-                    <option value="Facebook">Facebook</option>
-                    <option value="Agent">Agent</option>
-                    <option value="Business Card">Business Card</option>
-                    <option value="Phone Call">Phone Call</option>
+                    <option value="Inside">Inside</option>
+                    <option value="Field">Field</option>
                 </select>
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Profile Picture</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full p-2 border rounded"
+                />
+                {previewImage && (
+                    <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="mt-4 w-24 h-24 object-cover rounded-full"
+                    />
+                )}
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Years of Experience</label>
+                <input
+                    type="number"
+                    name="yearsOfExperience"
+                    value={agentData.yearsOfExperience}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Region Covered</label>
+                <input
+                    type="text"
+                    name="region"
+                    value={agentData.region}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Active Status</label>
+                <input
+                    type="checkbox"
+                    name="activeStatus"
+                    checked={agentData.activeStatus}
+                    onChange={handleChange}
+                    className="ml-2"
+                />{' '}
+                Active
             </div>
 
             <div className="mb-4">
                 <label className="block text-gray-700">Notes</label>
                 <textarea
                     name="notes"
-                    value={clientData.notes}
-                    onChange={handleClientChange}
+                    value={agentData.notes}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded"
+                    rows="4"
                 />
             </div>
 
-            {/* Conditional Rendering of Property Form */}
-            {isOwner && (
-                <div className="mt-6">
-                    <h3 className="text-xl font-bold mb-2">Property Details (For Owners)</h3>
-                    <PropertyForm onSubmit={handlePropertySubmit} />
-                </div>
-            )}
-
             <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-                Submit Client {isOwner && 'and Property'}
+                Submit Agent
             </button>
         </form>
     );
 };
 
-export default ClientForm;
+export default AgentForm;
