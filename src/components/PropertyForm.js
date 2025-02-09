@@ -1,62 +1,75 @@
 import React, { useState } from 'react';
 
-const PropertyForm = ({ onPropertyDataChange }) => {
+const PropertyForm = ({ onSubmit }) => {
     const [propertyData, setPropertyData] = useState({
-        id: '',
+        propertyId: '',
         title: '',
         type: 'Residential',
         category: 'For Sale',
         price: '',
         location: '',
         status: 'Available',
+        floorArea: '',
+        bedrooms: '',
+        bathrooms: '',
+        yearBuilt: '',
+        amenities: '',
         media: [],
+        description: '',
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPropertyData({ ...propertyData, [name]: value });
-        onPropertyDataChange({ ...propertyData, [name]: value });  // Pass updated data up
     };
 
-    const handleMediaUpload = (e) => {
+    const handleMediaChange = (e) => {
+        setPropertyData({ ...propertyData, media: Array.from(e.target.files) });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(propertyData);
+
+        // Clear form
         setPropertyData({
-            ...propertyData,
-            media: Array.from(e.target.files),
+            propertyId: '',
+            title: '',
+            type: 'Residential',
+            category: 'For Sale',
+            price: '',
+            location: '',
+            status: 'Available',
+            floorArea: '',
+            bedrooms: '',
+            bathrooms: '',
+            yearBuilt: '',
+            amenities: '',
+            media: [],
+            description: '',
         });
-        onPropertyDataChange({
-            ...propertyData,
-            media: Array.from(e.target.files),
-        });
+
+        alert('Property added successfully!');
     };
 
     return (
-        <div>
-            <div className="mb-4">
-                <label className="block font-semibold mb-2">Property ID</label>
-                <input
-                    type="text"
-                    name="id"
-                    value={propertyData.id}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    placeholder="Property ID"
-                />
-            </div>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4">Add New Property</h2>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Title/Name</label>
+                <label className="block text-gray-700">Title/Name</label>
                 <input
                     type="text"
                     name="title"
                     value={propertyData.title}
                     onChange={handleChange}
                     className="w-full p-2 border rounded"
-                    placeholder="Property Title"
+                    required
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Type</label>
+                <label className="block text-gray-700">Type</label>
                 <select
                     name="type"
                     value={propertyData.type}
@@ -69,7 +82,7 @@ const PropertyForm = ({ onPropertyDataChange }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Category</label>
+                <label className="block text-gray-700">Category</label>
                 <select
                     name="category"
                     value={propertyData.category}
@@ -83,31 +96,31 @@ const PropertyForm = ({ onPropertyDataChange }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Price</label>
+                <label className="block text-gray-700">Price</label>
                 <input
                     type="number"
                     name="price"
                     value={propertyData.price}
                     onChange={handleChange}
                     className="w-full p-2 border rounded"
-                    placeholder="Enter Price"
+                    required
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Location</label>
+                <label className="block text-gray-700">Location</label>
                 <input
                     type="text"
                     name="location"
                     value={propertyData.location}
                     onChange={handleChange}
                     className="w-full p-2 border rounded"
-                    placeholder="Location"
+                    required
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Status</label>
+                <label className="block text-gray-700">Status</label>
                 <select
                     name="status"
                     value={propertyData.status}
@@ -121,15 +134,88 @@ const PropertyForm = ({ onPropertyDataChange }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2">Upload Images/Videos (Optional)</label>
+                <label className="block text-gray-700">Floor Area (m² or sq. ft)</label>
                 <input
-                    type="file"
-                    multiple
-                    onChange={handleMediaUpload}
+                    type="number"
+                    name="floorArea"
+                    value={propertyData.floorArea}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded"
                 />
             </div>
-        </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Number of Bedrooms</label>
+                <input
+                    type="number"
+                    name="bedrooms"
+                    value={propertyData.bedrooms}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Number of Bathrooms</label>
+                <input
+                    type="number"
+                    name="bathrooms"
+                    value={propertyData.bathrooms}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Year Built or Renovated</label>
+                <input
+                    type="number"
+                    name="yearBuilt"
+                    value={propertyData.yearBuilt}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Amenities</label>
+                <input
+                    type="text"
+                    name="amenities"
+                    value={propertyData.amenities}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    placeholder="E.g., Pool, Gym, Parking"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Media (Images/Videos)</label>
+                <input
+                    type="file"
+                    name="media"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleMediaChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Description</label>
+                <textarea
+                    name="description"
+                    value={propertyData.description}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    rows="4"
+                />
+            </div>
+
+            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+                Submit Property
+            </button>
+        </form>
     );
 };
 
