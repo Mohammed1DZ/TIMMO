@@ -36,14 +36,13 @@ const Clients = () => {
                                 <p><strong>Type:</strong> {client.type}</p>
                                 <p><strong>Contact:</strong> {client.contactInfo}</p>
                                 <p><strong>Source:</strong> {client.source}</p>
-                                <p><strong>Is Owner:</strong> {client.isOwner ? 'Yes' : 'No'}</p>
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
 
-            {/* List of Properties (For reference) */}
+            {/* List of Properties */}
             <div className="mt-8">
                 <h2 className="text-2xl font-semibold mb-4">Listed Properties</h2>
                 {properties.length === 0 ? (
