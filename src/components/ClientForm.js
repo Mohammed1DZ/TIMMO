@@ -1,160 +1,133 @@
 import React, { useState } from 'react';
-import PropertyForm from './PropertyForm'; // Import PropertyForm
-import { v4 as uuidv4 } from 'uuid';
+import PropertyForm from './PropertyForm';
 
-const ClientForm = () => {
-    // State for client form
+const ClientForm = ({ addClient }) => {
     const [clientData, setClientData] = useState({
         clientId: '',
         clientName: '',
-        clientType: 'Renter (Looking for Property)',  // Default value
-        contactInfo: '',
-        sourceInfo: '',
+        clientType: 'Buyer',
+        phoneNumber: '',
+        source: 'Facebook',
+        preferredContact: '',
+        address: '',
+        budget: '',
+        notes: '',
     });
 
-    // State for property form (only shown if client is an owner)
-    const [propertyData, setPropertyData] = useState({
-        propertyId: '',
-        title: '',
-        type: 'Residential',
-        category: 'For Sale',
-        price: '',
-        location: '',
-        status: 'Available',
-        media: [],
-    });
-
-    const [isOwner, setIsOwner] = useState(false);  // To toggle property form
+    const [isOwner, setIsOwner] = useState(false);
+    const [propertyData, setPropertyData] = useState(null);
 
     const handleClientChange = (e) => {
-        setClientData({
-            ...clientData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+        setClientData({ ...clientData, [name]: value });
+
+        if (name === 'clientType') {
+            setIsOwner(value.includes('Owner'));
+        }
     };
 
-    const handlePropertyChange = (e) => {
-        setPropertyData({
-            ...propertyData,
-            [e.target.name]: e.target.value,
-        });
+    const handlePropertySubmit = (property) => {
+        setPropertyData(property);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // Add client and property to lists (mock, you can later replace with an API call)
-        const client = {
-            ...clientData,
-            clientId: uuidv4(),  // Generate unique ID for client
-        };
-
-        const property = {
-            ...propertyData,
-            propertyId: uuidv4(),  // Generate unique ID for property
-            clientId: client.clientId,  // Link property to client
-        };
-
-        console.log('Client added:', client);
-        console.log('Property added:', property);
-
-        // Clear the forms after submit
+        addClient({ ...clientData, property: propertyData });
         setClientData({
             clientId: '',
             clientName: '',
-            clientType: 'Renter (Looking for Property)',
-            contactInfo: '',
-            sourceInfo: '',
+            clientType: 'Buyer',
+            phoneNumber: '',
+            source: 'Facebook',
+            preferredContact: '',
+            address: '',
+            budget: '',
+            notes: '',
         });
-        setPropertyData({
-            propertyId: '',
-            title: '',
-            type: 'Residential',
-            category: 'For Sale',
-            price: '',
-            location: '',
-            status: 'Available',
-            media: [],
-        });
-    };
-
-    const toggleOwner = () => {
-        // Toggle client type to owner/renter and show property form when the client is an owner
-        setIsOwner(clientData.clientType === 'Owner');
+        setPropertyData(null);
+        alert('Client and property added successfully!');
     };
 
     return (
-        <div>
-            <h1>Clients Management</h1>
-            <form onSubmit={handleSubmit}>
-                {/* Client Details */}
-                <label>
-                    Client ID:
-                    <input
-                        type="text"
-                        name="clientId"
-                        value={clientData.clientId}
-                        onChange={handleClientChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Client Name:
-                    <input
-                        type="text"
-                        name="clientName"
-                        value={clientData.clientName}
-                        onChange={handleClientChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Client Type:
-                    <select
-                        name="clientType"
-                        value={clientData.clientType}
-                        onChange={handleClientChange}
-                        onBlur={toggleOwner}  // Toggle property form on client type change
-                    >
-                        <option value="Renter (Looking for Property)">Renter (Looking for Property)</option>
-                        <option value="Owner">Owner</option>
-                    </select>
-                </label>
-                <label>
-                    Contact Information:
-                    <input
-                        type="text"
-                        name="contactInfo"
-                        value={clientData.contactInfo}
-                        onChange={handleClientChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Source of Information:
-                    <input
-                        type="text"
-                        name="sourceInfo"
-                        value={clientData.sourceInfo}
-                        onChange={handleClientChange}
-                        required
-                    />
-                </label>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
-                {/* Property Form (conditionally rendered for owners) */}
-                {isOwner && (
-                    <div>
-                        <PropertyForm
-                            propertyData={propertyData}
-                            handlePropertyChange={handlePropertyChange}
-                        />
-                    </div>
-                )}
+            <div className="mb-4">
+                <label className="block text-gray-700">Client Name</label>
+                <input
+                    type="text"
+                    name="clientName"
+                    value={clientData.clientName}
+                    onChange={handleClientChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
 
-                {/* Submit button for both Client and Property */}
-                <button type="submit">Submit Client and Property</button>
-            </form>
-        </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Client Type</label>
+                <select
+                    name="clientType"
+                    value={clientData.clientType}
+                    onChange={handleClientChange}
+                    className="w-full p-2 border rounded"
+                >
+                    <option value="Renter (Owner of Property)">Renter (Owner)</option>
+                    <option value="Seller">Seller</option>
+                    <option value="Buyer">Buyer</option>
+                    <option value="Renter (Looking for Property)">Renter (Seeker)</option>
+                </select>
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Phone Number</label>
+                <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={clientData.phoneNumber}
+                    onChange={handleClientChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Source of Information</label>
+                <select
+                    name="source"
+                    value={clientData.source}
+                    onChange={handleClientChange}
+                    className="w-full p-2 border rounded"
+                >
+                    <option value="Facebook">Facebook</option>
+                    <option value="Agent">Agent</option>
+                    <option value="Business Card">Business Card</option>
+                    <option value="Phone Call">Phone Call</option>
+                </select>
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Notes</label>
+                <textarea
+                    name="notes"
+                    value={clientData.notes}
+                    onChange={handleClientChange}
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+
+            {/* Conditional Rendering of Property Form */}
+            {isOwner && (
+                <div className="mt-6">
+                    <h3 className="text-xl font-bold mb-2">Property Details (For Owners)</h3>
+                    <PropertyForm onSubmit={handlePropertySubmit} />
+                </div>
+            )}
+
+            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+                Submit Client {isOwner && 'and Property'}
+            </button>
+        </form>
     );
 };
 
