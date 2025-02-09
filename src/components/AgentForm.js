@@ -12,10 +12,7 @@ const AgentForm = ({ onSubmit }) => {
         region: '',
         activeStatus: true,
         notes: '',
-        profilePicture: '',  // Store the profile picture URL
     });
-
-    const [previewImage, setPreviewImage] = useState(null);  // Preview before submitting
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -25,23 +22,11 @@ const AgentForm = ({ onSubmit }) => {
         });
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImage(reader.result);
-                setAgentData({ ...agentData, profilePicture: reader.result });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(agentData);
 
-        // Clear form
+        // Reset form after submission
         setAgentData({
             agentId: uuidv4(),
             agentName: '',
@@ -52,15 +37,13 @@ const AgentForm = ({ onSubmit }) => {
             region: '',
             activeStatus: true,
             notes: '',
-            profilePicture: '',
         });
-        setPreviewImage(null);
 
         alert('Agent added successfully!');
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2 mx-auto">
             <h2 className="text-2xl font-bold mb-4">Add New Agent</h2>
 
             <div className="mb-4">
@@ -112,23 +95,6 @@ const AgentForm = ({ onSubmit }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-700">Profile Picture</label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="w-full p-2 border rounded"
-                />
-                {previewImage && (
-                    <img
-                        src={previewImage}
-                        alt="Preview"
-                        className="mt-4 w-24 h-24 object-cover rounded-full"
-                    />
-                )}
-            </div>
-
-            <div className="mb-4">
                 <label className="block text-gray-700">Years of Experience</label>
                 <input
                     type="number"
@@ -173,7 +139,7 @@ const AgentForm = ({ onSubmit }) => {
                 />
             </div>
 
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+            <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
                 Submit Agent
             </button>
         </form>
