@@ -1,13 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AgentForm from '../components/AgentForm';
 
-const Agents = () => {
-    const [agents, setAgents] = useState([]);
-
-    const addAgent = (newAgent) => {
-        setAgents((prevAgents) => [...prevAgents, newAgent]);
-    };
-
+const Agents = ({ agents, addAgent }) => {
     return (
         <div>
             <h1 className="text-3xl font-bold mb-6">Manage Agents</h1>
