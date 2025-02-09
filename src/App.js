@@ -15,7 +15,7 @@ function App() {
                 <Sidebar />
 
                 {/* Main content */}
-                <div className="flex-1 p-6 md:p-6 bg-gray-100 overflow-auto">
+                <div className="flex-1 p-8 md:p-6 bg-gray-100 overflow-auto">
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/properties" element={<Properties />} />
