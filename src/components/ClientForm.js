@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-const ClientForm = ({ onSubmit }) => {
+const ClientForm = ({ onSubmit, availableProperties }) => {
     const [formData, setFormData] = useState({
         id: '',
         name: '',
         type: 'Buyer',
         contactInfo: '',
         source: 'Facebook',
+        propertyId: '',
     });
 
     const handleChange = (e) => {
@@ -22,6 +23,7 @@ const ClientForm = ({ onSubmit }) => {
             type: 'Buyer',
             contactInfo: '',
             source: 'Facebook',
+            propertyId: '',
         });
     };
 
@@ -96,6 +98,24 @@ const ClientForm = ({ onSubmit }) => {
                     <option value="Collaborators">Collaborators</option>
                     <option value="Business Card">Business Card</option>
                     <option value="Phone Calls">Phone Calls</option>
+                </select>
+            </div>
+
+            {/* Related Property Dropdown */}
+            <div className="mb-4">
+                <label className="block font-semibold mb-2" htmlFor="propertyId">Related Property</label>
+                <select
+                    name="propertyId"
+                    value={formData.propertyId}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                >
+                    <option value="">Select Property</option>
+                    {availableProperties.map((property) => (
+                        <option key={property.id} value={property.id}>
+                            {property.title} - {property.location}
+                        </option>
+                    ))}
                 </select>
             </div>
 
