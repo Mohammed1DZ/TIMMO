@@ -26,14 +26,19 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
 
     const handleSubmitClient = (e) => {
         e.preventDefault();
+
+        // Submit the client to the clients list
         onSubmitClient(formData);
 
-        // If the client is an owner, submit the property data
+        // If the client is an owner, submit the property to the properties list
         if (showPropertyForm && propertyData) {
-            onSubmitProperty(propertyData);
+            onSubmitProperty({
+                ...propertyData,
+                owner: formData.name,  // Link the property to the client
+            });
         }
 
-        // Reset form
+        // Reset the form
         setFormData({
             id: '',
             name: '',
@@ -42,6 +47,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             source: 'Facebook',
         });
         setShowPropertyForm(false);
+        setPropertyData(null);
     };
 
     return (
@@ -130,7 +136,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
             )}
 
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                Submit Client
+                Submit Client and Property
             </button>
         </form>
     );
