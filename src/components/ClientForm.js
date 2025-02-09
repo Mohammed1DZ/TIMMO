@@ -1,29 +1,70 @@
 import React, { useState } from 'react';
 
-const ClientForm = ({ onSubmit, availableProperties }) => {
+const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
     const [formData, setFormData] = useState({
         id: '',
         name: '',
         type: 'Buyer',
         contactInfo: '',
         source: 'Facebook',
-        propertyId: '',
+        isOwner: false,
+        propertyDetails: {
+            propertyId: '',
+            title: '',
+            type: 'Apartment',
+            category: 'For Sale',
+            price: '',
+            location: '',
+            status: 'Available',
+        },
     });
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name.startsWith('propertyDetails.')) {
+            const propertyField = name.split('.')[1];
+            setFormData({
+                ...formData,
+                propertyDetails: {
+                    ...formData.propertyDetails,
+                    [propertyField]: value,
+                },
+            });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
+
+    const handleToggleOwner = () => {
+        setFormData({ ...formData, isOwner: !formData.isOwner });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmitClient(formData);
+
+        // If the client is an owner, submit their property to the properties list
+        if (formData.isOwner) {
+            onSubmitProperty(formData.propertyDetails);
+        }
+
+        // Reset form
         setFormData({
             id: '',
             name: '',
             type: 'Buyer',
             contactInfo: '',
             source: 'Facebook',
-            propertyId: '',
+            isOwner: false,
+            propertyDetails: {
+                propertyId: '',
+                title: '',
+                type: 'Apartment',
+                category: 'For Sale',
+                price: '',
+                location: '',
+                status: 'Available',
+            },
         });
     };
 
@@ -31,6 +72,7 @@ const ClientForm = ({ onSubmit, availableProperties }) => {
         <form onSubmit={handleSubmit} className="p-6 border rounded shadow-md bg-white">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
             
+            {/* Client Info Fields */}
             <div className="mb-4">
                 <label className="block font-semibold mb-2" htmlFor="id">Client ID</label>
                 <input 
@@ -86,7 +128,7 @@ const ClientForm = ({ onSubmit, availableProperties }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="source">Source of Information</label>
+                <label className="block font-semibold mb-2">Source of Information</label>
                 <select 
                     name="source"
                     value={formData.source}
@@ -101,23 +143,119 @@ const ClientForm = ({ onSubmit, availableProperties }) => {
                 </select>
             </div>
 
-            {/* Related Property Dropdown */}
+            {/* Property Owner Toggle */}
             <div className="mb-4">
-                <label className="block font-semibold mb-2" htmlFor="propertyId">Related Property</label>
-                <select
-                    name="propertyId"
-                    value={formData.propertyId}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                >
-                    <option value="">Select Property</option>
-                    {availableProperties.map((property) => (
-                        <option key={property.id} value={property.id}>
-                            {property.title} - {property.location}
-                        </option>
-                    ))}
-                </select>
+                <label className="block font-semibold mb-2">
+                    <input 
+                        type="checkbox"
+                        checked={formData.isOwner}
+                        onChange={handleToggleOwner}
+                        className="mr-2"
+                    />
+                    Is the Client a Property Owner?
+                </label>
             </div>
+
+            {/* Property Form (conditionally displayed) */}
+            {formData.isOwner && (
+                <div className="p-4 border rounded bg-gray-50">
+                    <h3 className="text-lg font-bold mb-4">Property Details</h3>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="propertyId">Property ID</label>
+                        <input 
+                            type="text"
+                            name="propertyDetails.propertyId"
+                            value={formData.propertyDetails.propertyId}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter Property ID"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="title">Property Title</label>
+                        <input 
+                            type="text"
+                            name="propertyDetails.title"
+                            value={formData.propertyDetails.title}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter Property Title"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="type">Property Type</label>
+                        <select 
+                            name="propertyDetails.type"
+                            value={formData.propertyDetails.type}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="Apartment">Apartment</option>
+                            <option value="House">House</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Office">Office</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="category">Category</label>
+                        <select 
+                            name="propertyDetails.category"
+                            value={formData.propertyDetails.category}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="For Sale">For Sale</option>
+                            <option value="For Rent">For Rent</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="price">Price</label>
+                        <input 
+                            type="number"
+                            name="propertyDetails.price"
+                            value={formData.propertyDetails.price}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter Price"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="location">Location</label>
+                        <input 
+                            type="text"
+                            name="propertyDetails.location"
+                            value={formData.propertyDetails.location}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="Enter Location"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block font-semibold mb-2" htmlFor="status">Status</label>
+                        <select 
+                            name="propertyDetails.status"
+                            value={formData.propertyDetails.status}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="Available">Available</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Rented">Rented</option>
+                        </select>
+                    </div>
+                </div>
+            )}
 
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
                 Submit Client
