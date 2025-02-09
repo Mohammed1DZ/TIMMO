@@ -12,7 +12,7 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className="w-36 bg-primary h-screen p-6 text-white flex flex-col items-center">
+        <div className="w-36 bg-primary h-screen p-2 text-white flex flex-col items-center">
             {/* Logo Section */}
             <div className="mb-12">
                 <img src="src/images/logo.png" alt="Logo" className="w-20 h-20" />
