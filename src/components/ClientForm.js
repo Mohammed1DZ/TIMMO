@@ -19,7 +19,7 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
 
         // Determine if the client type is an owner and show the property form accordingly
         if (name === 'type') {
-            const ownerTypes = ['Seller', 'Renter', 'Landlord'];
+            const ownerTypes = ['Seller', 'Renter (Owner)', 'Landlord'];
             setShowPropertyForm(ownerTypes.includes(value));
         }
     };
@@ -83,7 +83,8 @@ const ClientForm = ({ onSubmitClient, onSubmitProperty }) => {
                     className="w-full p-2 border rounded"
                 >
                     <option value="Buyer">Buyer</option>
-                    <option value="Renter">Renter</option>
+                    <option value="Renter (Looking)">Renter (Looking for Rent)</option>
+                    <option value="Renter (Owner)">Renter (Owner of Property)</option>
                     <option value="Seller">Seller</option>
                     <option value="Landlord">Landlord</option>
                 </select>
