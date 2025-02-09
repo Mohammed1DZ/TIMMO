@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -8,28 +8,14 @@ import Agents from './pages/Agents';
 import Settings from './pages/Settings';
 
 function App() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-
     return (
         <Router>
-            <div className="flex">
+            <div className="flex h-screen">
                 {/* Sidebar */}
-                <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-
-                {/* Mobile menu button */}
-                <button
-                    className="lg:hidden p-4 bg-blue-700 text-white fixed top-0 left-0 z-20"
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    Menu
-                </button>
+                <Sidebar />
 
                 {/* Main content */}
-                <div
-                    className={`flex-1 p-10 bg-gray-100 min-h-screen transition-all duration-300 ${
-                        sidebarOpen ? 'ml-64' : 'ml-0 lg:ml-64'
-                    }`}
-                >
+                <div className="flex-1 p-4 md:p-6 bg-gray-100 overflow-auto">
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/properties" element={<Properties />} />
