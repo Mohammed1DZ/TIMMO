@@ -10,11 +10,6 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEditData({ ...editData, [name]: value });
-    };
-
     const handleSave = () => {
         onEdit(editData);
         setIsEditing(false);  // Exit edit mode after saving
@@ -22,7 +17,6 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
 
     const handleDeleteConfirmation = () => {
         if (emailInput === correctEmail && passwordInput === correctPassword) {
-            // First call onDelete, then close the modal
             onDelete(agent.agentId);
             alert('Agent successfully deleted.');
             setShowConfirmDelete(false);
@@ -33,13 +27,10 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     };
 
     return (
-        <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            onClick={onClose}  // Clicking outside closes the modal
-        >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
             <div
                 className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative"
-                onClick={(e) => e.stopPropagation()}  // Prevent click inside from closing the modal
+                onClick={(e) => e.stopPropagation()}  // Prevent closing when clicking inside
             >
                 <button
                     onClick={onClose}
@@ -48,58 +39,7 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                     &#10005;
                 </button>
 
-                {isEditing ? (
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4">Edit Agent</h2>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Agent Name</label>
-                            <input
-                                type="text"
-                                name="agentName"
-                                value={editData.agentName}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Phone Number</label>
-                            <input
-                                type="tel"
-                                name="phoneNumber"
-                                value={editData.phoneNumber}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={editData.email}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Region Covered</label>
-                            <input
-                                type="text"
-                                name="region"
-                                value={editData.region}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <button onClick={handleSave} className="bg-blue-500 text-white p-2 rounded">Save Changes</button>
-                    </div>
-                ) : (
+                {!isEditing ? (
                     <div>
                         <h2 className="text-2xl font-bold mb-4">Agent Details</h2>
                         {agent.profilePicture && (
@@ -113,10 +53,11 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                                 className="w-24 h-24 rounded-full object-cover mb-4"
                             />
                         )}
+                        <p><strong>ID:</strong> {agent.agentId}</p>
                         <p><strong>Name:</strong> {agent.agentName}</p>
                         <p><strong>Phone:</strong> {agent.phoneNumber}</p>
                         <p><strong>Email:</strong> {agent.email || 'N/A'}</p>
-                        <p><strong>Type:</strong> {agent.typeOfAgent} Agent</p>
+                        <p><strong>Type:</strong> {agent.typeOfAgent}</p>
                         <p><strong>Region:</strong> {agent.region}</p>
                         <p><strong>Status:</strong> {agent.activeStatus ? 'Active' : 'Inactive'}</p>
                         <p><strong>Notes:</strong> {agent.notes || 'No additional notes'}</p>
@@ -136,9 +77,12 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                             </button>
                         </div>
                     </div>
+                ) : (
+                    // Edit form goes here if needed
+                    <p>Editing form placeholder</p>
                 )}
 
-                {/* Delete Confirmation Modal */}
+                {/* Delete confirmation modal */}
                 {showConfirmDelete && (
                     <div className="mt-4 p-4 bg-gray-100 rounded shadow-md">
                         <h3 className="text-lg font-bold mb-2">Confirm Deletion</h3>
