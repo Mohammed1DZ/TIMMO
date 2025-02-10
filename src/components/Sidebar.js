@@ -7,6 +7,9 @@ const Sidebar = ({ userRole }) => {
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
 
+    // Debugging: See current userRole
+    console.log('Current User Role:', userRole);
+
     const handleLogout = () => {
         // Clear any stored session data (if applicable)
         localStorage.clear();  // Adjust as needed
