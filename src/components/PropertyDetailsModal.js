@@ -7,6 +7,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
     const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+    const [isFullscreen, setIsFullscreen] = useState(false);  // Track fullscreen state
 
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
@@ -34,7 +35,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         setEditData({ ...editData, [name]: value });
     };
 
-    // Handle media navigation
+    // Media navigation
     const handleNextMedia = () => {
         setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
     };
@@ -52,6 +53,11 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [media]);
+
+    // Toggle fullscreen view
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
 
     return (
         <div
@@ -83,18 +89,20 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
 
                         {/* Media Display Section */}
                         {media.length > 0 && (
-                            <div className="relative w-full h-64 bg-gray-100 flex items-center justify-center">
+                            <div className={`relative w-full ${isFullscreen ? 'h-screen' : 'h-64'} bg-gray-100 flex items-center justify-center`}>
                                 {media[currentMediaIndex].type.startsWith('image') ? (
                                     <img
                                         src={URL.createObjectURL(media[currentMediaIndex])}
                                         alt="Property Media"
-                                        className="object-contain w-full h-full"
+                                        className={`object-contain ${isFullscreen ? 'w-full h-full' : 'w-full h-full cursor-pointer'}`}
+                                        onClick={toggleFullscreen}  // Toggle fullscreen on click
                                     />
                                 ) : (
                                     <video
                                         src={URL.createObjectURL(media[currentMediaIndex])}
                                         controls
-                                        className="object-contain w-full h-full"
+                                        className={`object-contain ${isFullscreen ? 'w-full h-full' : 'w-full h-full cursor-pointer'}`}
+                                        onClick={toggleFullscreen}
                                     />
                                 )}
 
