@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie, FaSignOutAlt } from 'react-icons/fa';
 import Logo from '../images/logo1.png';  // Adjust path if needed
 
 const Sidebar = ({ userRole }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Clear any stored session data (if applicable)
+        localStorage.clear();  // Adjust as needed
+        alert('You have successfully logged out.');
+        navigate('/login');  // Redirect to the login page
+    };
 
     // Dynamic link setup based on user role
     const links = [
@@ -23,12 +31,12 @@ const Sidebar = ({ userRole }) => {
         <div
             className={`bg-primary text-white h-screen transition-all duration-300 ${
                 isHovered ? 'w-48' : 'w-16'
-            } flex flex-col items-center`}
+            } flex flex-col items-center justify-between`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Logo Section */}
-            <div className="mb-8 mt-4">
+            <div className="mt-4">
                 <img src={Logo} alt="Logo" className="w-10 h-10" />
             </div>
 
@@ -52,6 +60,15 @@ const Sidebar = ({ userRole }) => {
                     </li>
                 ))}
             </ul>
+
+            {/* Logout Button */}
+            <button
+                onClick={handleLogout}
+                className="mb-6 flex items-center space-x-2 p-2 rounded-md transition-colors duration-300 text-gray-300 hover:text-white hover:bg-red-600 w-full"
+            >
+                <FaSignOutAlt size={25} className="ml-2" />
+                {isHovered && <span className="text-sm font-medium">Logout</span>}
+            </button>
         </div>
     );
 };
