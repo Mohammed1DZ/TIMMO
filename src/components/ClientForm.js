@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
-import PropertyForm from './PropertyForm';  // Import the property form
 
 const ClientForm = ({ onSubmit }) => {
     const [clientData, setClientData] = useState({
-        clientId: uuidv4(),  // Generate a unique ID for the client
+        clientId: uuidv4(),  // Auto-generated client ID
         name: '',
         phoneNumber: '',
-        clientType: 'Seller',  // Default to Seller (triggers property form by default)
+        clientType: 'Seller',  // Default to Seller
         source: 'Facebook',
         preferredContact: 'Phone',
     });
 
     const [propertyData, setPropertyData] = useState({
-        propertyId: uuidv4(),  // Generate a unique ID for the property
+        propertyId: uuidv4(),  // Auto-generated property ID
         title: '',
         type: 'Residential',
         category: 'For Sale',
@@ -29,14 +28,14 @@ const ClientForm = ({ onSubmit }) => {
         description: '',
     });
 
-    const [showPropertyForm, setShowPropertyForm] = useState(true);  // Default to show property form for Owner types
+    const [showPropertyForm, setShowPropertyForm] = useState(true);  // Default to show for owners
 
     // Handle client form changes
     const handleClientChange = (e) => {
         const { name, value } = e.target;
         setClientData({ ...clientData, [name]: value });
 
-        // Show property form only for Owners (Seller, Renter)
+        // Toggle property form visibility based on client type
         if (name === 'clientType') {
             setShowPropertyForm(value === 'Seller' || value === 'Renter');
         }
@@ -48,18 +47,23 @@ const ClientForm = ({ onSubmit }) => {
         setPropertyData({ ...propertyData, [name]: value });
     };
 
+    // Handle file input for media
+    const handleMediaChange = (e) => {
+        setPropertyData({ ...propertyData, media: Array.from(e.target.files) });
+    };
+
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const combinedData = {
             ...clientData,
-            property: showPropertyForm ? { ...propertyData, ownerId: clientData.clientId } : null,  // Include owner ID
+            property: showPropertyForm ? { ...propertyData, ownerId: clientData.clientId } : null,  // Link client and property by ID
         };
 
-        onSubmit(combinedData);  // Submit combined client and property data
+        onSubmit(combinedData);
 
-        // Clear the forms
+        // Reset forms after submission
         setClientData({
             clientId: uuidv4(),
             name: '',
@@ -91,6 +95,7 @@ const ClientForm = ({ onSubmit }) => {
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
+            {/* Client Details */}
             <div className="mb-4">
                 <label className="block text-gray-700">Name</label>
                 <input
@@ -159,12 +164,13 @@ const ClientForm = ({ onSubmit }) => {
                 </select>
             </div>
 
-            {/* Property Form Section (conditionally rendered) */}
+            {/* Property Form (conditionally rendered) */}
             {showPropertyForm && (
                 <div className="mt-6">
                     <h3 className="text-xl font-bold mb-2">Property Details</h3>
+
                     <div className="mb-4">
-                        <label className="block text-gray-700">Title/Name</label>
+                        <label className="block text-gray-700">Title</label>
                         <input
                             type="text"
                             name="title"
@@ -174,6 +180,7 @@ const ClientForm = ({ onSubmit }) => {
                             required
                         />
                     </div>
+
                     <div className="mb-4">
                         <label className="block text-gray-700">Type</label>
                         <select
@@ -186,6 +193,21 @@ const ClientForm = ({ onSubmit }) => {
                             <option value="Commercial">Commercial</option>
                         </select>
                     </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Category</label>
+                        <select
+                            name="category"
+                            value={propertyData.category}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="For Sale">For Sale</option>
+                            <option value="For Rent">For Rent</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+
                     <div className="mb-4">
                         <label className="block text-gray-700">Price</label>
                         <input
@@ -196,7 +218,111 @@ const ClientForm = ({ onSubmit }) => {
                             className="w-full p-2 border rounded"
                         />
                     </div>
-                    {/* Add other property fields as needed */}
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Location</label>
+                        <input
+                            type="text"
+                            name="location"
+                            value={propertyData.location}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Status</label>
+                        <select
+                            name="status"
+                            value={propertyData.status}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="Available">Available</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Rented">Rented</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Floor Area (m² or sq. ft)</label>
+                        <input
+                            type="number"
+                            name="floorArea"
+                            value={propertyData.floorArea}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Number of Bedrooms</label>
+                        <input
+                            type="number"
+                            name="bedrooms"
+                            value={propertyData.bedrooms}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Number of Bathrooms</label>
+                        <input
+                            type="number"
+                            name="bathrooms"
+                            value={propertyData.bathrooms}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Year Built or Renovated</label>
+                        <input
+                            type="number"
+                            name="yearBuilt"
+                            value={propertyData.yearBuilt}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Amenities</label>
+                        <input
+                            type="text"
+                            name="amenities"
+                            value={propertyData.amenities}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="E.g., Pool, Gym, Parking"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Media (Images/Videos)</label>
+                        <input
+                            type="file"
+                            name="media"
+                            accept="image/*,video/*"
+                            multiple
+                            onChange={handleMediaChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Description</label>
+                        <textarea
+                            name="description"
+                            value={propertyData.description}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                            rows="4"
+                        />
+                    </div>
                 </div>
             )}
 
