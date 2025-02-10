@@ -6,12 +6,24 @@ import Properties from './pages/Properties';
 import Clients from './pages/Clients';
 import Agents from './pages/Agents';
 import Settings from './pages/Settings';
+import SuperAdminProfile from './pages/SuperAdminProfile';  // Import the new component
 
 function App() {
     const [agents, setAgents] = useState([]);  // Centralized agent state
+    const [user, setUser] = useState({ name: 'John Doe', email: 'superadmin@example.com' });
 
     const addAgent = (newAgent) => {
         setAgents((prevAgents) => [...prevAgents, newAgent]);
+    };
+
+    const updateProfile = (updatedProfile) => {
+        setUser((prevUser) => ({ ...prevUser, ...updatedProfile }));
+        alert('Profile updated successfully!');
+    };
+
+    const logout = () => {
+        alert('Logged out successfully.');
+        // Implement actual logout logic here (e.g., clear authentication tokens)
     };
 
     return (
@@ -31,6 +43,16 @@ function App() {
                             element={<Agents agents={agents} addAgent={addAgent} />} 
                         />
                         <Route path="/settings" element={<Settings />} />
+                        <Route 
+                            path="/super-admin-profile" 
+                            element={
+                                <SuperAdminProfile 
+                                    user={user} 
+                                    onUpdateProfile={updateProfile} 
+                                    onLogout={logout} 
+                                />
+                            } 
+                        />
                     </Routes>
                 </div>
             </div>
