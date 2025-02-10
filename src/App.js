@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -11,6 +11,19 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
     const [agents, setAgents] = useState([]);  // Centralized agent state
+    const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || 'Guest');
+
+    useEffect(() => {
+        // Listen for role updates in localStorage
+        const handleStorageChange = () => {
+            setUserRole(localStorage.getItem('userRole') || 'Guest');
+        };
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
 
     const addAgent = (newAgent) => {
         setAgents((prevAgents) => [...prevAgents, newAgent]);
@@ -28,7 +41,8 @@ function App() {
                     element={
                         <PrivateRoute>
                             <div className="flex h-screen">
-                                <Sidebar />
+                                {/* Pass userRole to Sidebar */}
+                                <Sidebar userRole={userRole} />
                                 <div className="flex-1 p-8 md:p-6 bg-gray-100 overflow-auto">
                                     <Routes>
                                         <Route path="/" element={<Dashboard />} />
@@ -38,7 +52,8 @@ function App() {
                                             path="/agents"
                                             element={<Agents agents={agents} addAgent={addAgent} />}
                                         />
-                                        <Route path="/settings" element={<Settings />} />
+                                        {/* Pass userRole to Settings */}
+                                        <Route path="/settings" element={<Settings userRole={userRole} />} />
                                     </Routes>
                                 </div>
                             </div>
