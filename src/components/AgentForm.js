@@ -11,6 +11,7 @@ const AgentForm = ({ onSubmit }) => {
         yearsOfExperience: '',
         region: '',
         activeStatus: true,
+        profilePicture: null,
         notes: '',
     });
 
@@ -22,8 +23,19 @@ const AgentForm = ({ onSubmit }) => {
         });
     };
 
+    const handleFileChange = (e) => {
+        setAgentData({ ...agentData, profilePicture: e.target.files[0] });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Ensure profile picture is selected before submission
+        if (!agentData.profilePicture) {
+            alert('Please upload a profile picture.');
+            return;
+        }
+
         onSubmit(agentData);
 
         // Reset form after submission
@@ -36,6 +48,7 @@ const AgentForm = ({ onSubmit }) => {
             yearsOfExperience: '',
             region: '',
             activeStatus: true,
+            profilePicture: null,
             notes: '',
         });
 
@@ -126,6 +139,17 @@ const AgentForm = ({ onSubmit }) => {
                     className="ml-2"
                 />{' '}
                 Active
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700">Profile Picture</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
             </div>
 
             <div className="mb-4">
