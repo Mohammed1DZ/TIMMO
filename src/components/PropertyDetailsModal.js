@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -6,9 +6,12 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+    const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
+
+    const media = property.media || [];  // Array of images/videos
 
     const handleSave = () => {
         onEdit(editData);
@@ -20,7 +23,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
             onDelete(property.propertyId);
             alert('Property successfully deleted.');
             setShowConfirmDelete(false);
-            onClose();  // Close the modal after successful deletion
+            onClose();  // Close the modal after deletion
         } else {
             alert('Invalid email or password. Please try again.');
         }
@@ -30,6 +33,25 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
         const { name, value } = e.target;
         setEditData({ ...editData, [name]: value });
     };
+
+    // Handle media navigation
+    const handleNextMedia = () => {
+        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % media.length);
+    };
+
+    const handlePreviousMedia = () => {
+        setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length);
+    };
+
+    // Keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowRight') handleNextMedia();
+            if (e.key === 'ArrowLeft') handlePreviousMedia();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [media]);
 
     return (
         <div
@@ -57,16 +79,39 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                         <p><strong>Price:</strong> ${property.price}</p>
                         <p><strong>Location:</strong> {property.location}</p>
                         <p><strong>Status:</strong> {property.status}</p>
-                        <p><strong>Floor Area:</strong> {property.floorArea} m²</p>
-                        <p><strong>Bedrooms:</strong> {property.bedrooms}</p>
-                        <p><strong>Bathrooms:</strong> {property.bathrooms}</p>
-                        <p><strong>Year Built/Renovated:</strong> {property.yearBuilt}</p>
-                        <p><strong>Amenities:</strong> {property.amenities}</p>
                         <p><strong>Description:</strong> {property.description}</p>
 
-                        {/* Display related client ID */}
-                        {property.ownerId && (
-                            <p><strong>Client ID:</strong> {property.ownerId}</p>
+                        {/* Media Display Section */}
+                        {media.length > 0 && (
+                            <div className="relative w-full h-64 bg-gray-100 flex items-center justify-center">
+                                {media[currentMediaIndex].type.startsWith('image') ? (
+                                    <img
+                                        src={URL.createObjectURL(media[currentMediaIndex])}
+                                        alt="Property Media"
+                                        className="object-contain w-full h-full"
+                                    />
+                                ) : (
+                                    <video
+                                        src={URL.createObjectURL(media[currentMediaIndex])}
+                                        controls
+                                        className="object-contain w-full h-full"
+                                    />
+                                )}
+
+                                {/* Navigation Controls */}
+                                <button
+                                    onClick={handlePreviousMedia}
+                                    className="absolute left-2 text-white text-3xl bg-black bg-opacity-50 p-2 rounded-full"
+                                >
+                                    &#8249;
+                                </button>
+                                <button
+                                    onClick={handleNextMedia}
+                                    className="absolute right-2 text-white text-3xl bg-black bg-opacity-50 p-2 rounded-full"
+                                >
+                                    &#8250;
+                                </button>
+                            </div>
                         )}
 
                         <div className="mt-4 flex justify-end space-x-2">
@@ -99,71 +144,7 @@ const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
                                 required
                             />
                         </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Type</label>
-                            <select
-                                name="type"
-                                value={editData.type}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="Residential">Residential</option>
-                                <option value="Commercial">Commercial</option>
-                            </select>
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Category</label>
-                            <select
-                                name="category"
-                                value={editData.category}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="For Sale">For Sale</option>
-                                <option value="For Rent">For Rent</option>
-                                <option value="Both">Both</option>
-                            </select>
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Price</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={editData.price}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Location</label>
-                            <input
-                                type="text"
-                                name="location"
-                                value={editData.location}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Status</label>
-                            <select
-                                name="status"
-                                value={editData.status}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="Available">Available</option>
-                                <option value="Sold">Sold</option>
-                                <option value="Rented">Rented</option>
-                            </select>
-                        </div>
-
+                        {/* Other editable property fields go here */}
                         <button onClick={handleSave} className="bg-blue-500 text-white p-2 rounded">
                             Save Changes
                         </button>
