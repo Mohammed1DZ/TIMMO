@@ -72,13 +72,22 @@ const Agents = () => {
                     agents.map((agent, index) => (
                         <li
                             key={index}
-                            className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100"
+                            className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100 flex items-center space-x-4"
                             onClick={() => handleAgentClick(agent)}  // Open agent details
                         >
-                            <h3 className="text-xl font-bold">{agent.agentName}</h3>
-                            <p><strong>Phone:</strong> {agent.phoneNumber}</p>
-                            <p><strong>Email:</strong> {agent.email || 'N/A'}</p>
-                            <p><strong>Type:</strong> {agent.typeOfAgent}</p>
+                            {agent.profilePicture && (
+                                <img
+                                    src={URL.createObjectURL(agent.profilePicture)}
+                                    alt={`${agent.agentName}'s Profile`}
+                                    className="w-16 h-16 rounded-full object-cover"
+                                />
+                            )}
+                            <div>
+                                <h3 className="text-xl font-bold">{agent.agentName}</h3>
+                                <p><strong>Phone:</strong> {agent.phoneNumber}</p>
+                                <p><strong>Email:</strong> {agent.email || 'N/A'}</p>
+                                <p><strong>Type:</strong> {agent.typeOfAgent}</p>
+                            </div>
                         </li>
                     ))
                 )}
