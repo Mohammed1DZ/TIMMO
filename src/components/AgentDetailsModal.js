@@ -6,7 +6,7 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
-    
+
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
 
@@ -30,9 +30,20 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-black">X</button>
+        <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={onClose}  // Clicking outside closes the modal
+        >
+            <div
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative"
+                onClick={(e) => e.stopPropagation()}  // Prevent click inside from closing the modal
+            >
+                <button
+                    onClick={onClose}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                >
+                    &#10005;
+                </button>
 
                 {isEditing ? (
                     <div>
