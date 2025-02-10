@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import VisibilitySettings from '../components/VisibilitySettings';  // Import the component
+import VisibilitySettings from '../components/VisibilitySettings';
 
 const Settings = ({ userRole }) => {
     const navigate = useNavigate();
@@ -13,8 +13,8 @@ const Settings = ({ userRole }) => {
     }, [userRole, navigate]);
 
     const handleSaveVisibilitySettings = (settings) => {
-        // Save settings (You can extend this to save in localStorage, a database, or context)
-        console.log('Saved Visibility Settings:', settings);
+        localStorage.setItem('visibilitySettings', JSON.stringify(settings));
+        alert('Visibility settings have been saved!');
     };
 
     return (
