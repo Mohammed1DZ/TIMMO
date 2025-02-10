@@ -57,6 +57,11 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }) => {
                         <p><strong>Source:</strong> {client.source}</p>
                         <p><strong>Preferred Contact:</strong> {client.preferredContact}</p>
 
+                        {/* Display property ID if the client is an owner */}
+                        {(client.clientType === 'Seller' || client.clientType === 'Renter') && client.property && (
+                            <p><strong>Property ID:</strong> {client.property.propertyId}</p>
+                        )}
+
                         <div className="mt-4 flex justify-end space-x-2">
                             <button
                                 onClick={() => setIsEditing(true)}
@@ -108,8 +113,10 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }) => {
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded"
                             >
-                                <option value="Owner">Owner (Seller/Renter)</option>
-                                <option value="Looking for Property">Looking for Property (Buyer/Renter)</option>
+                                <option value="Seller">Seller (Owner)</option>
+                                <option value="Renter">Renter (Owner)</option>
+                                <option value="Buyer">Buyer (Property Seeker)</option>
+                                <option value="Tenant">Tenant (Property Seeker)</option>
                             </select>
                         </div>
 
