@@ -3,16 +3,21 @@ import { NavLink } from 'react-router-dom';
 import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie } from 'react-icons/fa';
 import Logo from '../images/logo1.png';  // Adjust path if needed
 
-const Sidebar = () => {
+const Sidebar = ({ userRole }) => {
     const [isHovered, setIsHovered] = useState(false);
 
+    // Dynamic link setup based on user role
     const links = [
         { path: '/', label: 'Dashboard', icon: <FaHome size={25} /> },
         { path: '/properties', label: 'Properties', icon: <FaBuilding size={25} /> },
         { path: '/clients', label: 'Clients', icon: <FaUsers size={25} /> },
         { path: '/agents', label: 'Agents', icon: <FaUserTie size={25} /> },
-        { path: '/settings', label: 'Settings', icon: <FaCogs size={25} /> },
     ];
+
+    // Show settings only for Super Admin and Admin
+    if (userRole === 'Super Admin' || userRole === 'Admin') {
+        links.push({ path: '/settings', label: 'Settings', icon: <FaCogs size={25} /> });
+    }
 
     return (
         <div
