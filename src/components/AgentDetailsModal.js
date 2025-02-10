@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
+const AgentDetailModal = ({ agent, onClose, onEdit, onDelete, userRole }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...agent });
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+    const [visibilitySettings, setVisibilitySettings] = useState({});
+
+    useEffect(() => {
+        // Load visibility settings from localStorage
+        const savedSettings = JSON.parse(localStorage.getItem('visibilitySettings'));
+        if (savedSettings) {
+            setVisibilitySettings(savedSettings);
+        }
+    }, []);
+
+    const canShowEditButton = visibilitySettings[userRole]?.showEditButton;
+    const canShowDeleteButton = visibilitySettings[userRole]?.showDeleteButton;
 
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
@@ -63,23 +75,52 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                         <p><strong>Notes:</strong> {agent.notes || 'No additional notes'}</p>
 
                         <div className="mt-4 flex justify-end space-x-2">
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="bg-green-500 text-white p-2 rounded"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => setShowConfirmDelete(true)}
-                                className="bg-red-500 text-white p-2 rounded"
-                            >
-                                Delete
-                            </button>
+                            {canShowEditButton && (
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-green-500 text-white p-2 rounded"
+                                >
+                                    Edit
+                                </button>
+                            )}
+                            {canShowDeleteButton && (
+                                <button
+                                    onClick={() => setShowConfirmDelete(true)}
+                                    className="bg-red-500 text-white p-2 rounded"
+                                >
+                                    Delete
+                                </button>
+                            )}
                         </div>
                     </div>
                 ) : (
-                    // Edit form goes here if needed
-                    <p>Editing form placeholder</p>
+                    <div>
+                        {/* Edit form */}
+                        <h2 className="text-2xl font-bold mb-4">Edit Agent</h2>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Name</label>
+                            <input
+                                type="text"
+                                value={editData.agentName}
+                                onChange={(e) => setEditData({ ...editData, agentName: e.target.value })}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Phone Number</label>
+                            <input
+                                type="text"
+                                value={editData.phoneNumber}
+                                onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2 rounded">
+                            Save Changes
+                        </button>
+                    </div>
                 )}
 
                 {/* Delete confirmation modal */}
