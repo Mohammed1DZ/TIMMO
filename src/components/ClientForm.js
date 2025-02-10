@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';  // For auto-generated client ID
-import PropertyForm from './PropertyForm';
+import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
+import PropertyForm from './PropertyForm';  // Import the property form
 
 const ClientForm = ({ onSubmit }) => {
     const [clientData, setClientData] = useState({
-        clientId: uuidv4(),
+        clientId: uuidv4(),  // Generate a unique ID for the client
         name: '',
         phoneNumber: '',
-        clientType: 'Owner',  // Default to Owner
+        clientType: 'Seller',  // Default to Seller (triggers property form by default)
         source: 'Facebook',
         preferredContact: 'Phone',
     });
 
     const [propertyData, setPropertyData] = useState({
-        propertyId: uuidv4(),
+        propertyId: uuidv4(),  // Generate a unique ID for the property
         title: '',
         type: 'Residential',
         category: 'For Sale',
@@ -29,16 +29,16 @@ const ClientForm = ({ onSubmit }) => {
         description: '',
     });
 
-    const [showPropertyForm, setShowPropertyForm] = useState(clientData.clientType.includes('Owner'));
+    const [showPropertyForm, setShowPropertyForm] = useState(true);  // Default to show property form for Owner types
 
     // Handle client form changes
     const handleClientChange = (e) => {
         const { name, value } = e.target;
         setClientData({ ...clientData, [name]: value });
 
-        // Show property form if the client is an owner
+        // Show property form only for Owners (Seller, Renter)
         if (name === 'clientType') {
-            setShowPropertyForm(value.includes('Owner'));
+            setShowPropertyForm(value === 'Seller' || value === 'Renter');
         }
     };
 
@@ -51,18 +51,20 @@ const ClientForm = ({ onSubmit }) => {
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const combinedData = {
             ...clientData,
-            property: showPropertyForm ? propertyData : null,  // Include property data if applicable
+            property: showPropertyForm ? { ...propertyData, ownerId: clientData.clientId } : null,  // Include owner ID
         };
-        onSubmit(combinedData);  // Submit combined data
+
+        onSubmit(combinedData);  // Submit combined client and property data
 
         // Clear the forms
         setClientData({
             clientId: uuidv4(),
             name: '',
             phoneNumber: '',
-            clientType: 'Owner',
+            clientType: 'Seller',
             source: 'Facebook',
             preferredContact: 'Phone',
         });
@@ -89,7 +91,6 @@ const ClientForm = ({ onSubmit }) => {
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4">Add New Client</h2>
 
-            {/* Client Details */}
             <div className="mb-4">
                 <label className="block text-gray-700">Name</label>
                 <input
@@ -122,8 +123,10 @@ const ClientForm = ({ onSubmit }) => {
                     onChange={handleClientChange}
                     className="w-full p-2 border rounded"
                 >
-                    <option value="Owner">Owner (Seller/Renter)</option>
-                    <option value="Looking for Property">Looking for Property (Buyer/Renter)</option>
+                    <option value="Seller">Seller (Owner)</option>
+                    <option value="Renter">Renter (Owner)</option>
+                    <option value="Buyer">Buyer (Property Seeker)</option>
+                    <option value="Tenant">Tenant (Property Seeker)</option>
                 </select>
             </div>
 
@@ -171,7 +174,29 @@ const ClientForm = ({ onSubmit }) => {
                             required
                         />
                     </div>
-                    {/* Add other property fields like type, category, etc., here using the same structure */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Type</label>
+                        <select
+                            name="type"
+                            value={propertyData.type}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="Residential">Residential</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Price</label>
+                        <input
+                            type="number"
+                            name="price"
+                            value={propertyData.price}
+                            onChange={handlePropertyChange}
+                            className="w-full p-2 border rounded"
+                        />
+                    </div>
+                    {/* Add other property fields as needed */}
                 </div>
             )}
 
