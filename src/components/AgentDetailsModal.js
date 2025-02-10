@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
+const AgentDetailsModal = ({ agent, onClose, onEdit, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...agent });
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -23,6 +23,7 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const handleDeleteConfirmation = () => {
         if (emailInput === correctEmail && passwordInput === correctPassword) {
             onDelete(agent.agentId);
+            alert('Agent successfully deleted.');
         } else {
             alert('Invalid email or password. Please try again.');
         }
@@ -101,7 +102,11 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
                         <h2 className="text-2xl font-bold mb-4">Agent Details</h2>
                         {agent.profilePicture && (
                             <img
-                                src={agent.profilePicture}
+                                src={
+                                    typeof agent.profilePicture === 'string'
+                                        ? agent.profilePicture
+                                        : URL.createObjectURL(agent.profilePicture)
+                                }
                                 alt={`${agent.agentName}'s Profile`}
                                 className="w-24 h-24 rounded-full object-cover mb-4"
                             />
@@ -173,4 +178,4 @@ const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     );
 };
 
-export default AgentDetailModal;
+export default AgentDetailsModal;
