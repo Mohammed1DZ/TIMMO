@@ -1,43 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Mocked user data for demo purposes (this will be replaced with backend authentication)
-const mockUsers = [
-    { email: 'superadmin@example.com', password: 'superadmin123', role: 'Super Admin' },
-    { email: 'admin@example.com', password: 'admin123', role: 'Admin' },
-    { email: 'agent@example.com', password: 'agent123', role: 'Agent' }
-];
-
-const Login = ({ setUserRole }) => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
 
-        // Find the matching user in the mock data
-        const user = mockUsers.find(
-            (u) => u.email === email && u.password === password
-        );
-
-        if (user) {
-            // Set user role and redirect to dashboard
-            setUserRole(user.role);
+        // Replace this with actual authentication logic
+        if (email === 'superadmin@example.com' && password === 'superadmin123') {
+            localStorage.setItem('userRole', 'Super Admin');
+            navigate('/');
+        } else if (email === 'admin@example.com' && password === 'admin123') {
+            localStorage.setItem('userRole', 'Admin');
+            navigate('/');
+        } else if (email === 'agent@example.com' && password === 'agent123') {
+            localStorage.setItem('userRole', 'Agent');
             navigate('/');
         } else {
-            setError('Invalid email or password');
+            alert('Invalid credentials. Please try again.');
         }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-4">Login</h2>
-
-                {error && <p className="text-red-500">{error}</p>}
-
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+                <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
                         <label className="block text-gray-700">Email</label>
@@ -49,7 +39,6 @@ const Login = ({ setUserRole }) => {
                             required
                         />
                     </div>
-
                     <div className="mb-4">
                         <label className="block text-gray-700">Password</label>
                         <input
@@ -60,11 +49,7 @@ const Login = ({ setUserRole }) => {
                             required
                         />
                     </div>
-
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                    >
+                    <button type="submit" className="bg-blue-500 text-white w-full p-2 rounded">
                         Login
                     </button>
                 </form>
