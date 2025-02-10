@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AgentDetailsModal = ({ agent, onClose, onEdit, onDelete }) => {
+const AgentDetailModal = ({ agent, onClose, onEdit, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...agent });
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -22,12 +22,14 @@ const AgentDetailsModal = ({ agent, onClose, onEdit, onDelete }) => {
 
     const handleDeleteConfirmation = () => {
         if (emailInput === correctEmail && passwordInput === correctPassword) {
+            // First call onDelete, then close the modal
             onDelete(agent.agentId);
             alert('Agent successfully deleted.');
+            setShowConfirmDelete(false);
+            onClose();  // Close the modal after successful deletion
         } else {
             alert('Invalid email or password. Please try again.');
         }
-        setShowConfirmDelete(false);
     };
 
     return (
@@ -178,4 +180,4 @@ const AgentDetailsModal = ({ agent, onClose, onEdit, onDelete }) => {
     );
 };
 
-export default AgentDetailsModal;
+export default AgentDetailModal;
