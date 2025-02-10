@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';  // Import unique ID generator
 import AgentForm from '../components/AgentForm';
 import AgentDetailsModal from '../components/AgentDetailsModal';
 
@@ -10,7 +11,8 @@ const Agents = () => {
 
     // Function to add a new agent
     const handleAddAgent = (newAgent) => {
-        setAgents([...agents, newAgent]);
+        const agentWithId = { ...newAgent, agentId: uuidv4() };  // Assign unique ID
+        setAgents([...agents, agentWithId]);
         setShowForm(false);
     };
 
@@ -22,6 +24,11 @@ const Agents = () => {
         setShowForm(false);
         setIsEditing(false);
         setSelectedAgent(null);
+    };
+
+    // Function to delete an agent
+    const handleDeleteAgent = (agentId) => {
+        setAgents(agents.filter((agent) => agent.agentId !== agentId));
     };
 
     // Function to handle agent click for popup details
@@ -69,9 +76,9 @@ const Agents = () => {
                 {agents.length === 0 ? (
                     <p>No agents listed yet.</p>
                 ) : (
-                    agents.map((agent, index) => (
+                    agents.map((agent) => (
                         <li
-                            key={index}
+                            key={agent.agentId}
                             className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100 flex items-center space-x-4"
                             onClick={() => handleAgentClick(agent)}  // Open agent details
                         >
@@ -83,6 +90,7 @@ const Agents = () => {
                                 />
                             )}
                             <div>
+                                <p><strong>ID:</strong> {agent.agentId}</p>
                                 <h3 className="text-xl font-bold">{agent.agentName}</h3>
                                 <p><strong>Phone:</strong> {agent.phoneNumber}</p>
                                 <p><strong>Email:</strong> {agent.email || 'N/A'}</p>
@@ -97,7 +105,8 @@ const Agents = () => {
                 <AgentDetailsModal
                     agent={selectedAgent}
                     onClose={handleCloseModal}
-                    onEdit={handleEditFromModal}  // Handle edit from the modal
+                    onEdit={handleEditFromModal}
+                    onDelete={handleDeleteAgent}  // Correctly handle delete
                 />
             )}
         </div>
