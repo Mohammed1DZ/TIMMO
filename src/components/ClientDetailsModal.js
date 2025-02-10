@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }) => {
+const ClientDetailsModal = ({ client, onClose, onEdit, onDelete, userRole }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...client });
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+    const [visibilitySettings, setVisibilitySettings] = useState({});
+
+    useEffect(() => {
+        const savedSettings = JSON.parse(localStorage.getItem('visibilitySettings'));
+        if (savedSettings) {
+            setVisibilitySettings(savedSettings);
+        }
+    }, []);
+
+    const canShowEditButton = visibilitySettings[userRole]?.showEditButton;
+    const canShowDeleteButton = visibilitySettings[userRole]?.showDeleteButton;
 
     const correctEmail = 'admin@example.com';  // Replace with actual admin email
     const correctPassword = 'admin123';        // Replace with actual admin password
@@ -57,24 +68,27 @@ const ClientDetailsModal = ({ client, onClose, onEdit, onDelete }) => {
                         <p><strong>Source:</strong> {client.source}</p>
                         <p><strong>Preferred Contact:</strong> {client.preferredContact}</p>
 
-                        {/* Display property ID if the client is an owner */}
                         {(client.clientType === 'Seller' || client.clientType === 'Renter') && client.property && (
                             <p><strong>Property ID:</strong> {client.property.propertyId}</p>
                         )}
 
                         <div className="mt-4 flex justify-end space-x-2">
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="bg-green-500 text-white p-2 rounded"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => setShowConfirmDelete(true)}
-                                className="bg-red-500 text-white p-2 rounded"
-                            >
-                                Delete
-                            </button>
+                            {canShowEditButton && (
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-green-500 text-white p-2 rounded"
+                                >
+                                    Edit
+                                </button>
+                            )}
+                            {canShowDeleteButton && (
+                                <button
+                                    onClick={() => setShowConfirmDelete(true)}
+                                    className="bg-red-500 text-white p-2 rounded"
+                                >
+                                    Delete
+                                </button>
+                            )}
                         </div>
                     </div>
                 ) : (
