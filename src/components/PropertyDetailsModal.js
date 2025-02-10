@@ -1,155 +1,213 @@
 import React, { useState } from 'react';
 
-const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete, userRole }) => {
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [touchStartX, setTouchStartX] = useState(0);
+const PropertyDetailsModal = ({ property, onClose, onEdit, onDelete }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState({ ...property });
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [emailInput, setEmailInput] = useState('');
+    const [passwordInput, setPasswordInput] = useState('');
 
-    if (!property) return null;
+    const correctEmail = 'admin@example.com';  // Replace with actual admin email
+    const correctPassword = 'admin123';        // Replace with actual admin password
 
-    const SWIPE_THRESHOLD = 50;
-
-    const handleTouchStart = (e) => {
-        setTouchStartX(e.touches[0].clientX);
-    };
-
-    const handleTouchEnd = (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const swipeDistance = touchStartX - touchEndX;
-
-        if (swipeDistance > SWIPE_THRESHOLD) {
-            handleNextMedia(); // Swipe left
-        } else if (swipeDistance < -SWIPE_THRESHOLD) {
-            handlePreviousMedia(); // Swipe right
-        }
-    };
-
-    const handlePreviousMedia = () => {
-        setCurrentMediaIndex((prev) => (prev === 0 ? property.media.length - 1 : prev - 1));
-    };
-
-    const handleNextMedia = () => {
-        setCurrentMediaIndex((prev) => (prev === property.media.length - 1 ? 0 : prev + 1));
-    };
-
-    const toggleFullScreen = () => {
-        setIsFullScreen(!isFullScreen);
-    };
-
-    const handleEdit = () => {
-        onEdit();
-        onClose();  // Automatically close the popup after editing
+    const handleSave = () => {
+        onEdit(editData);
+        setIsEditing(false);
     };
 
     const handleDeleteConfirmation = () => {
-        const confirmed = window.confirm("Are you sure you want to delete this property?");
-        if (confirmed) {
-            onDelete();  // Proceed with deletion if confirmed
-            onClose();  // Close the popup after deletion
+        if (emailInput === correctEmail && passwordInput === correctPassword) {
+            onDelete(property.propertyId);
+            alert('Property successfully deleted.');
+            setShowConfirmDelete(false);
+            onClose();  // Close the modal after successful deletion
+        } else {
+            alert('Invalid email or password. Please try again.');
         }
     };
 
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
-                <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-black">X</button>
-                <h2 className="text-2xl font-bold mb-4">{property.title}</h2>
-                <p><strong>ID:</strong> {property.propertyId}</p>
-                <p><strong>Type:</strong> {property.type}</p>
-                <p><strong>Category:</strong> {property.category}</p>
-                <p><strong>Price:</strong> ${property.price}</p>
-                <p><strong>Location:</strong> {property.location}</p>
-                <p><strong>Status:</strong> {property.status}</p>
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditData({ ...editData, [name]: value });
+    };
 
-                {/* Media Section */}
-                {property.media && property.media.length > 0 && (
-                    <div className="relative w-full h-64 flex justify-center items-center">
-                        <div
-                            className="relative w-full h-full cursor-pointer"
-                            onClick={toggleFullScreen}
-                            onTouchStart={handleTouchStart}
-                            onTouchEnd={handleTouchEnd}
-                        >
-                            {property.media[currentMediaIndex].type.startsWith('image') ? (
-                                <img
-                                    src={URL.createObjectURL(property.media[currentMediaIndex])}
-                                    alt="Property media"
-                                    className="w-full h-full object-cover rounded"
-                                />
-                            ) : (
-                                <video
-                                    src={URL.createObjectURL(property.media[currentMediaIndex])}
-                                    controls
-                                    className="w-full h-full object-cover rounded"
-                                />
-                            )}
+    return (
+        <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative"
+                onClick={(e) => e.stopPropagation()}  // Prevent closing when clicking inside
+            >
+                <button
+                    onClick={onClose}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-black"
+                >
+                    &#10005;
+                </button>
+
+                {!isEditing ? (
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4">Property Details</h2>
+                        <p><strong>Property ID:</strong> {property.propertyId}</p>
+                        <p><strong>Title:</strong> {property.title}</p>
+                        <p><strong>Type:</strong> {property.type}</p>
+                        <p><strong>Category:</strong> {property.category}</p>
+                        <p><strong>Price:</strong> ${property.price}</p>
+                        <p><strong>Location:</strong> {property.location}</p>
+                        <p><strong>Status:</strong> {property.status}</p>
+                        <p><strong>Floor Area:</strong> {property.floorArea} m²</p>
+                        <p><strong>Bedrooms:</strong> {property.bedrooms}</p>
+                        <p><strong>Bathrooms:</strong> {property.bathrooms}</p>
+                        <p><strong>Year Built/Renovated:</strong> {property.yearBuilt}</p>
+                        <p><strong>Amenities:</strong> {property.amenities}</p>
+                        <p><strong>Description:</strong> {property.description}</p>
+
+                        {/* Display related client ID */}
+                        {property.ownerId && (
+                            <p><strong>Client ID:</strong> {property.ownerId}</p>
+                        )}
+
+                        <div className="mt-4 flex justify-end space-x-2">
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="bg-green-500 text-white p-2 rounded"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                onClick={() => setShowConfirmDelete(true)}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    // Edit form
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4">Edit Property</h2>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Title</label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={editData.title}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                                required
+                            />
                         </div>
 
-                        {/* Navigation Arrows */}
-                        <button
-                            onClick={handlePreviousMedia}
-                            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
-                        >
-                            &#10094;
-                        </button>
-                        <button
-                            onClick={handleNextMedia}
-                            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
-                        >
-                            &#10095;
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Type</label>
+                            <select
+                                name="type"
+                                value={editData.type}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="Residential">Residential</option>
+                                <option value="Commercial">Commercial</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Category</label>
+                            <select
+                                name="category"
+                                value={editData.category}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="For Sale">For Sale</option>
+                                <option value="For Rent">For Rent</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Price</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={editData.price}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Location</label>
+                            <input
+                                type="text"
+                                name="location"
+                                value={editData.location}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                                required
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Status</label>
+                            <select
+                                name="status"
+                                value={editData.status}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                            >
+                                <option value="Available">Available</option>
+                                <option value="Sold">Sold</option>
+                                <option value="Rented">Rented</option>
+                            </select>
+                        </div>
+
+                        <button onClick={handleSave} className="bg-blue-500 text-white p-2 rounded">
+                            Save Changes
                         </button>
                     </div>
                 )}
 
-                <div className="mt-4 flex justify-between">
-                    <button onClick={handleEdit} className="bg-green-500 text-white px-4 py-2 rounded">Edit</button>
-
-                    {/* Conditionally render the Delete button for Super Admin and Admin */}
-                    {(userRole === 'Super Admin' || userRole === 'Admin') && (
-                        <button onClick={handleDeleteConfirmation} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-                    )}
-                </div>
+                {/* Delete Confirmation Modal */}
+                {showConfirmDelete && (
+                    <div className="mt-4 p-4 bg-gray-100 rounded shadow-md">
+                        <h3 className="text-lg font-bold mb-2">Confirm Deletion</h3>
+                        <p>Please enter the admin email and password to confirm deletion:</p>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={emailInput}
+                            onChange={(e) => setEmailInput(e.target.value)}
+                            className="w-full p-2 border rounded mt-2"
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={passwordInput}
+                            onChange={(e) => setPasswordInput(e.target.value)}
+                            className="w-full p-2 border rounded mt-2"
+                            required
+                        />
+                        <div className="flex justify-end space-x-2 mt-4">
+                            <button
+                                onClick={handleDeleteConfirmation}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Confirm
+                            </button>
+                            <button
+                                onClick={() => setShowConfirmDelete(false)}
+                                className="bg-gray-300 p-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
-
-            {/* Full-Screen Media Viewer */}
-            {isFullScreen && (
-                <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center">
-                    <button onClick={toggleFullScreen} className="absolute top-2 right-2 text-white text-2xl">X</button>
-
-                    {property.media[currentMediaIndex].type.startsWith('image') ? (
-                        <img
-                            src={URL.createObjectURL(property.media[currentMediaIndex])}
-                            alt="Full screen media"
-                            className="w-auto max-h-full rounded"
-                            onTouchStart={handleTouchStart}
-                            onTouchEnd={handleTouchEnd}
-                        />
-                    ) : (
-                        <video
-                            src={URL.createObjectURL(property.media[currentMediaIndex])}
-                            controls
-                            className="w-auto max-h-full rounded"
-                            onTouchStart={handleTouchStart}
-                            onTouchEnd={handleTouchEnd}
-                        />
-                    )}
-
-                    {/* Navigation Arrows */}
-                    <button
-                        onClick={handlePreviousMedia}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
-                    >
-                        &#10094;
-                    </button>
-                    <button
-                        onClick={handleNextMedia}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-3 rounded-full opacity-75 hover:opacity-100"
-                    >
-                        &#10095;
-                    </button>
-                </div>
-            )}
         </div>
     );
 };
