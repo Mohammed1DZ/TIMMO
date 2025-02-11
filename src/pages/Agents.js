@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';  // Import unique ID generator
 import AgentForm from '../components/AgentForm';
 import AgentDetailsModal from '../components/AgentDetailsModal';
@@ -8,6 +8,16 @@ const Agents = () => {
     const [showForm, setShowForm] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [visibilitySettings, setVisibilitySettings] = useState({
+        showEditButton: true,
+        showDeleteButton: true,
+        showAddAgentButton: true,
+    });
+
+    useEffect(() => {
+        const storedSettings = JSON.parse(localStorage.getItem('visibilitySettings')) || visibilitySettings;
+        setVisibilitySettings(storedSettings);
+    }, []);
 
     // Function to add a new agent
     const handleAddAgent = (newAgent) => {
@@ -51,16 +61,19 @@ const Agents = () => {
         <div className="p-10">
             <h1 className="text-3xl font-bold mb-6">Agents Management</h1>
 
-            <button
-                onClick={() => {
-                    setShowForm(!showForm);
-                    setIsEditing(false);
-                    setSelectedAgent(null);
-                }}
-                className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
-            >
-                {showForm ? 'Hide Form' : 'Add New Agent'}
-            </button>
+            {/* Conditionally show Add New Agent button */}
+            {visibilitySettings.showAddAgentButton && (
+                <button
+                    onClick={() => {
+                        setShowForm(!showForm);
+                        setIsEditing(false);
+                        setSelectedAgent(null);
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
+                >
+                    {showForm ? 'Hide Form' : 'Add New Agent'}
+                </button>
+            )}
 
             {/* Show the form for adding or editing */}
             {showForm && (
@@ -95,6 +108,28 @@ const Agents = () => {
                                 <p><strong>Phone:</strong> {agent.phoneNumber}</p>
                                 <p><strong>Email:</strong> {agent.email || 'N/A'}</p>
                                 <p><strong>Type:</strong> {agent.typeOfAgent}</p>
+                            </div>
+
+                            <div className="ml-auto space-x-2">
+                                {/* Conditionally show Edit Button */}
+                                {visibilitySettings.showEditButton && (
+                                    <button
+                                        onClick={handleEditFromModal}
+                                        className="bg-green-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+
+                                {/* Conditionally show Delete Button */}
+                                {visibilitySettings.showDeleteButton && (
+                                    <button
+                                        onClick={() => handleDeleteAgent(agent.agentId)}
+                                        className="bg-red-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                )}
                             </div>
                         </li>
                     ))
