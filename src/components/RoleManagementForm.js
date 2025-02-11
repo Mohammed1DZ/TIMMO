@@ -162,8 +162,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Name</label>
+                    <label htmlFor="name" className="block text-gray-700">Name</label>
                     <input
+                        id="name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -173,8 +174,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700">Email</label>
+                    <label htmlFor="email" className="block text-gray-700">Email</label>
                     <input
+                        id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -184,8 +186,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700">Password</label>
+                    <label htmlFor="password" className="block text-gray-700">Password</label>
                     <input
+                        id="password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -195,8 +198,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700">Role</label>
+                    <label htmlFor="role" className="block text-gray-700">Role</label>
                     <select
+                        id="role"
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -215,10 +219,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
                             {Object.keys(permissions[category]).map((key) => (
                                 <div key={key} className="flex items-center mb-2">
                                     <input
+                                        id={`${category}-${key}`}
                                         type="checkbox"
                                         checked={permissions[category][key]}
                                         onChange={() => handlePermissionChange(category, key)}
-                                        id={`${category}-${key}`}
                                     />
                                     <label htmlFor={`${category}-${key}`} className="ml-2 capitalize">
                                         {key}
