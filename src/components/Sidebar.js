@@ -19,18 +19,14 @@ const Sidebar = ({ userRole }) => {
                     },
                     body: JSON.stringify({ role: userRole }),  // Send the user role to the backend
                 });
-
-                const data = await response.json();  // Parse response
-
-                // Log the entire response for inspection
-                console.log('Full API Response:', data);
-
-                // Check if 'links' exists and update state, otherwise provide fallback
+                const data = await response.json();
+                
+                // Safely handle the response and prevent undefined errors
                 if (data && data.links) {
                     setLinks(data.links);
                 } else {
                     console.warn('No links found in response:', data);
-                    setLinks([]);  // Default to empty array if no links are returned
+                    setLinks([]);  // Default to an empty array if no links are returned
                 }
             } catch (error) {
                 console.error('Error fetching sidebar links:', error);
@@ -38,7 +34,7 @@ const Sidebar = ({ userRole }) => {
             }
         };
 
-        fetchLinks();  // Trigger the fetch when component mounts
+        fetchLinks();
     }, [userRole]);
 
     const handleLogout = () => {
