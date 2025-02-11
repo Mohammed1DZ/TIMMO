@@ -14,7 +14,7 @@ function App() {
     const [userRole, setUserRole] = useState(localStorage.getItem('userRole') || 'Guest');
 
     useEffect(() => {
-        // Listen for role updates in localStorage
+        // Update userRole if it changes in localStorage
         const handleStorageChange = () => {
             setUserRole(localStorage.getItem('userRole') || 'Guest');
         };
@@ -29,11 +29,17 @@ function App() {
         setAgents((prevAgents) => [...prevAgents, newAgent]);
     };
 
+    // Update userRole if login/logout happens within the app
+    const updateUserRole = (role) => {
+        localStorage.setItem('userRole', role);
+        setUserRole(role);
+    };
+
     return (
         <Router>
             <Routes>
                 {/* Public Route */}
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login updateUserRole={updateUserRole} />} />
 
                 {/* Protected Routes */}
                 <Route
