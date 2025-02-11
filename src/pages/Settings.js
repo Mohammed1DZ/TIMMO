@@ -1,31 +1,52 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import VisibilitySettings from '../components/VisibilitySettings';
+import React, { useState } from 'react';
+import RoleManagementForm from '../components/RoleManagementForm';
 
 const Settings = ({ userRole }) => {
-    const navigate = useNavigate();
+    const [users, setUsers] = useState(
+        JSON.parse(localStorage.getItem('userManagement')) || []  // Initial state from storage
+    );
 
-    // Redirect if the user is not Super Admin or Admin
-    useEffect(() => {
-        if (userRole !== 'Super Admin' && userRole !== 'Admin') {
-            navigate('/');  // Redirect to the Dashboard or another accessible page
-        }
-    }, [userRole, navigate]);
+    const handleSaveUser = (newUser) => {
+        const updatedUsers = [...users, newUser];
+        setUsers(updatedUsers);
+        localStorage.setItem('userManagement', JSON.stringify(updatedUsers));  // Persist changes
+    };
 
-    const handleSaveVisibilitySettings = (settings) => {
-        localStorage.setItem('visibilitySettings', JSON.stringify(settings));
-        alert('Visibility settings have been saved!');
+    const handleDeleteUser = (userId) => {
+        const filteredUsers = users.filter((user) => user.id !== userId);
+        setUsers(filteredUsers);
+        localStorage.setItem('userManagement', JSON.stringify(filteredUsers));
     };
 
     return (
         <div className="p-10">
-            <h1 className="text-3xl font-bold mb-6">Settings Page</h1>
-            <p><strong>Current Role:</strong> {userRole}</p>
+            <h1 className="text-3xl font-bold mb-6">Settings - User & Role Management</h1>
 
-            <div className="mt-6 space-y-6">
-                {/* Render Visibility Settings Section */}
-                <VisibilitySettings onSave={handleSaveVisibilitySettings} />
-            </div>
+            {/* Role Management Form */}
+            <RoleManagementForm onSaveUser={handleSaveUser} />
+
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Current Users</h2>
+            <ul>
+                {users.length === 0 ? (
+                    <p>No users added yet.</p>
+                ) : (
+                    users.map((user) => (
+                        <li key={user.id} className="border p-4 rounded mb-2 flex justify-between">
+                            <div>
+                                <p><strong>ID:</strong> {user.id}</p>
+                                <p><strong>Name:</strong> {user.name}</p>
+                                <p><strong>Role:</strong> {user.role}</p>
+                            </div>
+                            <button
+                                onClick={() => handleDeleteUser(user.id)}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Delete
+                            </button>
+                        </li>
+                    ))
+                )}
+            </ul>
         </div>
     );
 };
