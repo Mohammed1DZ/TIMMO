@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RoleManagementForm from '../components/RoleManagementForm';
+import VisibilitySettings from '../components/VisibilitySettings';
 
 const Settings = ({ userRole }) => {
     const [users, setUsers] = useState(
@@ -18,12 +19,20 @@ const Settings = ({ userRole }) => {
         localStorage.setItem('userManagement', JSON.stringify(filteredUsers));
     };
 
+    const handleSaveVisibilitySettings = (settings) => {
+        localStorage.setItem('visibilitySettings', JSON.stringify(settings));
+        alert('Visibility settings saved!');
+    };
+
     return (
         <div className="p-10">
             <h1 className="text-3xl font-bold mb-6">Settings - User & Role Management</h1>
 
             {/* Role Management Form */}
             <RoleManagementForm onSaveUser={handleSaveUser} />
+
+            <h2 className="text-2xl font-semibold mt-8 mb-4">Visibility Settings</h2>
+            <VisibilitySettings onSave={handleSaveVisibilitySettings} />
 
             <h2 className="text-2xl font-semibold mt-8 mb-4">Current Users</h2>
             <ul>
