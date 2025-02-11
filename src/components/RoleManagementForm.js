@@ -34,7 +34,7 @@ const RoleManagementForm = ({ currentUserRole }) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('https://your-serverless-endpoint/getUsers');
+                const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers');
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {
@@ -78,7 +78,7 @@ const RoleManagementForm = ({ currentUserRole }) => {
         };
 
         try {
-            const response = await fetch('https://your-serverless-endpoint/addOrUpdateUser', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/addOrUpdateUser', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUser),
@@ -127,7 +127,7 @@ const RoleManagementForm = ({ currentUserRole }) => {
 
     const handleDeleteUser = async (userId) => {
         try {
-            const response = await fetch('https://your-serverless-endpoint/removeUser', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/removeUser', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId }),
