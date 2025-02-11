@@ -1,71 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Initial visibility settings (default state)
-const initialVisibilitySettings = {
-    fieldAgent: {
-        showEditButton: false,
-        showDeleteButton: false,
-    },
-    insideAgent: {
-        showEditButton: false,
-        showDeleteButton: false,
-    },
-    admin: {
-        showEditButton: true,
-        showDeleteButton: true,
-    },
+const defaultSettings = {
+    showEditButton: true,
+    showDeleteButton: true,
+    showAddPropertyButton: true,
+    showAddClientButton: true,
 };
 
 const VisibilitySettings = ({ onSave }) => {
-    const [visibilitySettings, setVisibilitySettings] = useState(initialVisibilitySettings);
+    const [visibility, setVisibility] = useState(
+        JSON.parse(localStorage.getItem('visibilitySettings')) || defaultSettings
+    );
 
-    // Toggle the visibility for a specific role and button type
-    const handleToggle = (role, setting) => {
-        setVisibilitySettings((prev) => ({
+    useEffect(() => {
+        localStorage.setItem('visibilitySettings', JSON.stringify(visibility));
+    }, [visibility]);
+
+    const handleChange = (e) => {
+        const { name, checked } = e.target;
+        setVisibility((prev) => ({
             ...prev,
-            [role]: {
-                ...prev[role],
-                [setting]: !prev[role][setting],
-            },
+            [name]: checked,
         }));
     };
 
-    const handleSaveSettings = () => {
-        onSave(visibilitySettings);
-        alert('Visibility settings have been saved!');
+    const handleSave = () => {
+        onSave(visibility);
+        alert('Visibility settings saved successfully!');
     };
 
     return (
-        <div className="bg-gray-100 p-6 rounded shadow-md">
+        <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
             <h2 className="text-2xl font-bold mb-4">Visibility Settings</h2>
 
-            {/* Visibility controls for each role */}
-            {Object.keys(visibilitySettings).map((role) => (
-                <div key={role} className="mb-6">
-                    <h3 className="text-xl font-semibold capitalize">{role.replace(/([A-Z])/g, ' $1')} Visibility</h3>
-                    <div className="space-y-2">
-                        <label className="block">
-                            <input
-                                type="checkbox"
-                                checked={visibilitySettings[role].showEditButton}
-                                onChange={() => handleToggle(role, 'showEditButton')}
-                            />
-                            <span className="ml-2">Show Edit Button</span>
-                        </label>
+            <div className="mb-4">
+                <input
+                    type="checkbox"
+                    id="showEditButton"
+                    name="showEditButton"
+                    checked={visibility.showEditButton}
+                    onChange={handleChange}
+                />
+                <label htmlFor="showEditButton" className="ml-2 text-gray-700">Show Edit Button</label>
+            </div>
 
-                        <label className="block">
-                            <input
-                                type="checkbox"
-                                checked={visibilitySettings[role].showDeleteButton}
-                                onChange={() => handleToggle(role, 'showDeleteButton')}
-                            />
-                            <span className="ml-2">Show Delete Button</span>
-                        </label>
-                    </div>
-                </div>
-            ))}
+            <div className="mb-4">
+                <input
+                    type="checkbox"
+                    id="showDeleteButton"
+                    name="showDeleteButton"
+                    checked={visibility.showDeleteButton}
+                    onChange={handleChange}
+                />
+                <label htmlFor="showDeleteButton" className="ml-2 text-gray-700">Show Delete Button</label>
+            </div>
 
-            <button onClick={handleSaveSettings} className="bg-blue-500 text-white px-4 py-2 rounded">
+            <div className="mb-4">
+                <input
+                    type="checkbox"
+                    id="showAddPropertyButton"
+                    name="showAddPropertyButton"
+                    checked={visibility.showAddPropertyButton}
+                    onChange={handleChange}
+                />
+                <label htmlFor="showAddPropertyButton" className="ml-2 text-gray-700">Show Add Property Button</label>
+            </div>
+
+            <div className="mb-4">
+                <input
+                    type="checkbox"
+                    id="showAddClientButton"
+                    name="showAddClientButton"
+                    checked={visibility.showAddClientButton}
+                    onChange={handleChange}
+                />
+                <label htmlFor="showAddClientButton" className="ml-2 text-gray-700">Show Add Client Button</label>
+            </div>
+
+            <button onClick={handleSave} className="bg-blue-500 text-white p-2 rounded">
                 Save Settings
             </button>
         </div>
