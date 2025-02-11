@@ -13,7 +13,7 @@ const Sidebar = ({ userRole }) => {
         // Fetch sidebar links from the backend
         const fetchLinks = async () => {
             try {
-                const response = await fetch('https://your-serverless-endpoint/sidebar-links', {
+                const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
