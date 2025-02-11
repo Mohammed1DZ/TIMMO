@@ -17,9 +17,13 @@ const Login = () => {
             if (response.status === 200) {
                 const { role, token } = response.data;
 
-                // Store user role and authentication token in local storage
+                // Set token expiry for 24 hours
+                const tokenExpiryTime = new Date().getTime() + 24 * 60 * 60 * 1000;  // 24 hours
+
+                // Store user role, auth token, and expiry time
                 localStorage.setItem('userRole', role);
                 localStorage.setItem('authToken', token);
+                localStorage.setItem('tokenExpiry', tokenExpiryTime);
 
                 alert('Login successful!');
                 navigate('/');  // Redirect to dashboard
