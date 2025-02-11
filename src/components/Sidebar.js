@@ -6,11 +6,10 @@ import * as icons from 'react-icons/fa';  // Dynamically load icons
 
 const Sidebar = ({ userRole }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [links, setLinks] = useState([]);
+    const [links, setLinks] = useState([]);  // Initialize with an empty array
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch sidebar links from the backend
         const fetchLinks = async () => {
             try {
                 const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks', {
@@ -21,9 +20,17 @@ const Sidebar = ({ userRole }) => {
                     body: JSON.stringify({ role: userRole }),  // Send the user role to the backend
                 });
                 const data = await response.json();
-                setLinks(data.links);
+                
+                // Safely handle the response and prevent undefined errors
+                if (data && data.links) {
+                    setLinks(data.links);
+                } else {
+                    console.warn('No links found in response:', data);
+                    setLinks([]);  // Default to an empty array if no links are returned
+                }
             } catch (error) {
                 console.error('Error fetching sidebar links:', error);
+                setLinks([]);  // Set empty array on fetch failure
             }
         };
 
@@ -51,27 +58,29 @@ const Sidebar = ({ userRole }) => {
 
             {/* Navigation Links */}
             <ul className="space-y-6 w-full">
-                {links.map((link) => {
-                    // Dynamically render icons
-                    const IconComponent = icons[link.icon];
-                    return (
-                        <li key={link.path} className="w-full">
-                            <NavLink
-                                to={link.path}
-                                className={({ isActive }) =>
-                                    `flex items-center space-x-4 p-2 rounded-md transition-colors duration-300 ${
-                                        isActive
-                                            ? 'bg-accent text-black'
-                                            : 'text-gray-300 hover:bg-gray-700'
-                                    }`
-                                }
-                            >
-                                <div className="ml-2">{IconComponent && <IconComponent size={25} />}</div>
-                                {isHovered && <span className="text-sm font-medium">{link.label}</span>}
-                            </NavLink>
-                        </li>
-                    );
-                })}
+                {links.length > 0 ? (
+                    links.map((link) => {
+                        // Dynamically render icons
+                        const IconComponent = icons[link.icon];
+                        return (
+                            <li key={link.path} className="w-full">
+                                <NavLink
+                                    to={link.path}
+                                    className={({ isActive }) =>
+                                        `flex items-center space-x-4 p-2 rounded-md transition-colors duration-300 ${
+                                            isActive ? 'bg-accent text-black' : 'text-gray-300 hover:bg-gray-700'
+                                        }`
+                                    }
+                                >
+                                    <div className="ml-2">{IconComponent && <IconComponent size={25} />}</div>
+                                    {isHovered && <span className="text-sm font-medium">{link.label}</span>}
+                                </NavLink>
+                            </li>
+                        );
+                    })
+                ) : (
+                    <li className="text-gray-300">No links available</li>
+                )}
             </ul>
 
             {/* Logout Button */}
