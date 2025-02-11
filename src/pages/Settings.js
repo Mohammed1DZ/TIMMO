@@ -109,20 +109,35 @@ const Settings = ({ userRole }) => {
             {/* Section Tabs */}
             <div className="flex gap-4 mb-6">
                 <button
-                    className={`px-4 py-2 rounded ${activeSection === 'roleManagement' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'roleManagement' 
+                            ? 'bg-blue-500 text-white ring-blue-500' 
+                            : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
                     onClick={() => setActiveSection('roleManagement')}
+                    aria-selected={activeSection === 'roleManagement'}
                 >
                     Role Management
                 </button>
                 <button
-                    className={`px-4 py-2 rounded ${activeSection === 'sidebar' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'sidebar' 
+                            ? 'bg-blue-500 text-white ring-blue-500' 
+                            : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
                     onClick={() => setActiveSection('sidebar')}
+                    aria-selected={activeSection === 'sidebar'}
                 >
                     Sidebar Management
                 </button>
                 <button
-                    className={`px-4 py-2 rounded ${activeSection === 'formFields' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'formFields' 
+                            ? 'bg-blue-500 text-white ring-blue-500' 
+                            : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
                     onClick={() => setActiveSection('formFields')}
+                    aria-selected={activeSection === 'formFields'}
                 >
                     Form Field Management
                 </button>
