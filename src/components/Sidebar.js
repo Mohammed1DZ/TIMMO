@@ -1,34 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaHome, FaBuilding, FaUsers, FaCogs, FaUserTie, FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt } from 'react-icons/fa';
 import Logo from '../images/logo1.png';  // Adjust path if needed
+import * as icons from 'react-icons/fa';  // Dynamically load icons
 
 const Sidebar = ({ userRole }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [links, setLinks] = useState([]);
     const navigate = useNavigate();
 
-    // Debugging: See current userRole
-    console.log('Current User Role:', userRole);
+    useEffect(() => {
+        // Fetch sidebar links from the backend
+        const fetchLinks = async () => {
+            try {
+                const response = await fetch('https://your-serverless-endpoint/sidebar-links', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ role: userRole }),  // Send the user role to the backend
+                });
+                const data = await response.json();
+                setLinks(data.links);
+            } catch (error) {
+                console.error('Error fetching sidebar links:', error);
+            }
+        };
+
+        fetchLinks();
+    }, [userRole]);
 
     const handleLogout = () => {
-        // Clear any stored session data (if applicable)
-        localStorage.clear();  // Adjust as needed
+        localStorage.clear();  // Clear session data if applicable
         alert('You have successfully logged out.');
         navigate('/login');  // Redirect to the login page
     };
-
-    // Dynamic link setup based on user role
-    const links = [
-        { path: '/', label: 'Dashboard', icon: <FaHome size={25} /> },
-        { path: '/properties', label: 'Properties', icon: <FaBuilding size={25} /> },
-        { path: '/clients', label: 'Clients', icon: <FaUsers size={25} /> },
-        { path: '/agents', label: 'Agents', icon: <FaUserTie size={25} /> },
-    ];
-
-    // Show settings only for Super Admin and Admin
-    if (userRole === 'Super Admin' || userRole === 'Admin') {
-        links.push({ path: '/settings', label: 'Settings', icon: <FaCogs size={25} /> });
-    }
 
     return (
         <div
@@ -45,23 +51,27 @@ const Sidebar = ({ userRole }) => {
 
             {/* Navigation Links */}
             <ul className="space-y-6 w-full">
-                {links.map((link) => (
-                    <li key={link.path} className="w-full">
-                        <NavLink
-                            to={link.path}
-                            className={({ isActive }) =>
-                                `flex items-center space-x-4 p-2 rounded-md transition-colors duration-300 ${
-                                    isActive
-                                        ? 'bg-accent text-black'
-                                        : 'text-gray-300 hover:bg-gray-700'
-                                }`
-                            }
-                        >
-                            <div className="ml-2">{link.icon}</div>
-                            {isHovered && <span className="text-sm font-medium">{link.label}</span>}
-                        </NavLink>
-                    </li>
-                ))}
+                {links.map((link) => {
+                    // Dynamically render icons
+                    const IconComponent = icons[link.icon];
+                    return (
+                        <li key={link.path} className="w-full">
+                            <NavLink
+                                to={link.path}
+                                className={({ isActive }) =>
+                                    `flex items-center space-x-4 p-2 rounded-md transition-colors duration-300 ${
+                                        isActive
+                                            ? 'bg-accent text-black'
+                                            : 'text-gray-300 hover:bg-gray-700'
+                                    }`
+                                }
+                            >
+                                <div className="ml-2">{IconComponent && <IconComponent size={25} />}</div>
+                                {isHovered && <span className="text-sm font-medium">{link.label}</span>}
+                            </NavLink>
+                        </li>
+                    );
+                })}
             </ul>
 
             {/* Logout Button */}
