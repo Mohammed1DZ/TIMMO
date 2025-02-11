@@ -20,54 +20,66 @@ const linksDatabase = {
 
 exports.handler = async (event) => {
     try {
-        console.log('Received request:', event.body);  // Debug request payload
+        console.log('Received request:', event.body);  // Debugging request payload
+        
+        // Parse request safely with fallback for empty/undefined body
+        const parsedBody = event.body ? JSON.parse(event.body) : {};
+        const { role, updatedLinks, action } = parsedBody;
 
-        // Parse incoming request body
-        const { role, updatedLinks, action } = JSON.parse(event.body);
-
-        // Check if the role exists
         if (!role || !linksDatabase[role]) {
             return {
                 statusCode: 400,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                 },
-                body: JSON.stringify({ message: 'Invalid role provided.' })
+                body: JSON.stringify({ message: 'Invalid or missing role provided.' })
             };
         }
 
         if (action === 'update') {
+            if (!updatedLinks || !Array.isArray(updatedLinks)) {
+                return {
+                    statusCode: 400,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                    body: JSON.stringify({ message: 'Invalid or missing updated links.' })
+                };
+            }
+
             console.log('Updating links for role:', role);  // Debug update action
             linksDatabase[role] = updatedLinks;  // Update in-memory data (replace in production)
-            
+
             return {
                 statusCode: 200,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',  // Allow all origins
+                    'Access-Control-Allow-Origin': '*',
                 },
                 body: JSON.stringify({ message: 'Links updated successfully.' })
             };
         } else {
             console.log('Fetching links for role:', role);  // Debug fetch action
             const links = linksDatabase[role];
-            
+
             return {
                 statusCode: 200,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',  // Allow all origins
+                    'Access-Control-Allow-Origin': '*',
                 },
                 body: JSON.stringify({ links })
             };
         }
     } catch (error) {
         console.error('Error handling sidebar links:', error);
-        
         return {
             statusCode: 500,
             headers: {
                 'Access-Control-Allow-Origin': '*',
             },
-            body: JSON.stringify({ message: 'Failed to handle sidebar links.', error: error.message })
+            body: JSON.stringify({
+                message: 'Failed to handle sidebar links.',
+                error: error.message || 'Internal Server Error'
+            })
         };
     }
 };
