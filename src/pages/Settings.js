@@ -8,42 +8,44 @@ const Settings = ({ userRole }) => {
     const [users, setUsers] = useState([]);
     const [sidebarLinks, setSidebarLinks] = useState([]);
     const [formFields, setFormFields] = useState([]);
-    const [buttons, setButtons] = useState({});
 
     // Fetch data from the backend
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers');
-                const sidebarResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks');
-                const formFieldResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields');
-                const buttonResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getButtonPermissions');
+                const [userRes, sidebarRes, formFieldRes] = await Promise.all([
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers'),
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks'),
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields')
+                ]);
 
-                const usersData = await userResponse.json();
-                const sidebarData = await sidebarResponse.json();
-                const formFieldsData = await formFieldResponse.json();
-                const buttonData = await buttonResponse.json();
+                const usersData = await userRes.json();
+                const sidebarData = await sidebarRes.json();
+                const formFieldsData = await formFieldRes.json();
 
                 setUsers(usersData);
-                setSidebarLinks(sidebarData.links);
-                setFormFields(formFieldsData.fields);
-                setButtons(buttonData.buttons);
+                setSidebarLinks(sidebarData.links || []);
+                setFormFields(formFieldsData.fields || []);
             } catch (error) {
                 console.error('Error fetching settings data:', error);
             }
         };
+
         fetchData();
     }, []);
 
     // Backend update functions
     const handleSaveUser = async (newUser) => {
         try {
-            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateUsers', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateUsers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify([...users, newUser])
+                body: JSON.stringify(newUser)
             });
-            setUsers((prev) => [...prev, newUser]);
+            if (response.ok) {
+                const updatedUsers = await response.json();
+                setUsers(updatedUsers);
+            }
         } catch (error) {
             console.error('Error saving user:', error);
         }
@@ -75,71 +77,15 @@ const Settings = ({ userRole }) => {
         }
     };
 
-    const handleButtonUpdate = async (updatedButtons) => {
-        try {
-            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateButtonPermissions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedButtons)
-            });
-            setButtons(updatedButtons);
-        } catch (error) {
-            console.error('Error updating button permissions:', error);
-        }
-    };
-
     // Dynamic section rendering
     const renderSection = () => {
         switch (activeSection) {
             case 'roleManagement':
-                return (
-                    <RoleManagementForm
-                        users={users}
-                        onSaveUser={handleSaveUser}
-                    />
-                );
+                return <RoleManagementForm users={users} onSaveUser={handleSaveUser} />;
             case 'sidebar':
-                return (
-                    <SidebarLinkManagement
-                        sidebarLinks={sidebarLinks}
-                        onSidebarUpdate={handleSidebarUpdate}
-                        userRole={userRole}
-                    />
-                );
+                return <SidebarLinkManagement sidebarLinks={sidebarLinks} onSidebarUpdate={handleSidebarUpdate} userRole={userRole} />;
             case 'formFields':
-                return (
-                    <FormFieldManagement
-                        formFields={formFields}
-                        onFormFieldUpdate={handleFormFieldUpdate}
-                    />
-                );
-            case 'buttons':
-                return (
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4">Manage Button Permissions</h2>
-                        {Object.keys(buttons).map((btn) => (
-                            <div key={btn} className="flex items-center mb-2">
-                                <input
-                                    type="checkbox"
-                                    checked={buttons[btn]}
-                                    onChange={() =>
-                                        setButtons((prev) => ({
-                                            ...prev,
-                                            [btn]: !prev[btn],
-                                        }))
-                                    }
-                                    id={btn}
-                                />
-                                <label htmlFor={btn} className="ml-2 capitalize">
-                                    {btn.replace(/([A-Z])/g, ' $1')}
-                                </label>
-                            </div>
-                        ))}
-                        <button onClick={() => handleButtonUpdate(buttons)} className="bg-blue-500 text-white p-2 rounded">
-                            Save Button Permissions
-                        </button>
-                    </div>
-                );
+                return <FormFieldManagement formFields={formFields} onFormFieldUpdate={handleFormFieldUpdate} />;
             default:
                 return null;
         }
@@ -147,21 +93,33 @@ const Settings = ({ userRole }) => {
 
     return (
         <div className="p-10">
-            <h1 className="text-3xl font-bold mb-6">Settings - Manage Users, Sidebar, Forms & Buttons</h1>
-            
+            <h1 className="text-3xl font-bold mb-6">Settings - Manage Users, Sidebar, and Forms</h1>
+
             {/* Section Tabs */}
             <div className="flex gap-4 mb-6">
-                <button onClick={() => setActiveSection('roleManagement')} className={activeSection === 'roleManagement' ? 'bg-blue-500 text-white' : 'bg-gray-200'}>
+                <button
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'roleManagement' ? 'bg-blue-500 text-white ring-blue-500' : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
+                    onClick={() => setActiveSection('roleManagement')}
+                >
                     Role Management
                 </button>
-                <button onClick={() => setActiveSection('sidebar')} className={activeSection === 'sidebar' ? 'bg-blue-500 text-white' : 'bg-gray-200'}>
+                <button
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'sidebar' ? 'bg-blue-500 text-white ring-blue-500' : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
+                    onClick={() => setActiveSection('sidebar')}
+                >
                     Sidebar Management
                 </button>
-                <button onClick={() => setActiveSection('formFields')} className={activeSection === 'formFields' ? 'bg-blue-500 text-white' : 'bg-gray-200'}>
+                <button
+                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                        activeSection === 'formFields' ? 'bg-blue-500 text-white ring-blue-500' : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                    }`}
+                    onClick={() => setActiveSection('formFields')}
+                >
                     Form Field Management
-                </button>
-                <button onClick={() => setActiveSection('buttons')} className={activeSection === 'buttons' ? 'bg-blue-500 text-white' : 'bg-gray-200'}>
-                    Button Management
                 </button>
             </div>
 
