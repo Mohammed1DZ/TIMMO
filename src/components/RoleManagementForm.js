@@ -7,24 +7,21 @@ const RoleManagementForm = ({ currentUserRole }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('Agent');  // Default role
     const [permissions, setPermissions] = useState({
-        sidebarLinks: {
-            dashboard: false,
-            properties: false,
-            clients: false,
-            agents: false,
-            settings: false,
-        },
         buttons: {
             addUser: false,
+            editUser: false,
             deleteUser: false,
             addProperty: false,
+            editProperty: false,
             deleteProperty: false,
+            addClient: false,
+            editClient: false,
+            deleteClient: false
         },
         forms: {
             clientForm: false,
             agentForm: false,
-            propertyForm: false,
-            settingsForm: false,
+            propertyForm: false
         }
     });
     const [error, setError] = useState('');
@@ -103,24 +100,21 @@ const RoleManagementForm = ({ currentUserRole }) => {
         setPassword('');
         setRole('Agent');
         setPermissions({
-            sidebarLinks: {
-                dashboard: false,
-                properties: false,
-                clients: false,
-                agents: false,
-                settings: false,
-            },
             buttons: {
                 addUser: false,
+                editUser: false,
                 deleteUser: false,
                 addProperty: false,
+                editProperty: false,
                 deleteProperty: false,
+                addClient: false,
+                editClient: false,
+                deleteClient: false
             },
             forms: {
                 clientForm: false,
                 agentForm: false,
-                propertyForm: false,
-                settingsForm: false,
+                propertyForm: false
             }
         });
     };
@@ -162,10 +156,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label htmlFor="name" className="block text-gray-700">Name</label>
+                    <label className="block text-gray-700" htmlFor="name">Name</label>
                     <input
-                        id="name"
                         type="text"
+                        id="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -174,10 +168,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="email" className="block text-gray-700">Email</label>
+                    <label className="block text-gray-700" htmlFor="email">Email</label>
                     <input
-                        id="email"
                         type="email"
+                        id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -186,10 +180,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="password" className="block text-gray-700">Password</label>
+                    <label className="block text-gray-700" htmlFor="password">Password</label>
                     <input
-                        id="password"
                         type="password"
+                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -198,7 +192,7 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="role" className="block text-gray-700">Role</label>
+                    <label className="block text-gray-700" htmlFor="role">Role</label>
                     <select
                         id="role"
                         value={role}
@@ -219,10 +213,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
                             {Object.keys(permissions[category]).map((key) => (
                                 <div key={key} className="flex items-center mb-2">
                                     <input
-                                        id={`${category}-${key}`}
                                         type="checkbox"
                                         checked={permissions[category][key]}
                                         onChange={() => handlePermissionChange(category, key)}
+                                        id={`${category}-${key}`}
                                     />
                                     <label htmlFor={`${category}-${key}`} className="ml-2 capitalize">
                                         {key}
@@ -237,21 +231,6 @@ const RoleManagementForm = ({ currentUserRole }) => {
                     Add User
                 </button>
             </form>
-
-            <h3 className="text-xl font-bold mt-6">Existing Users</h3>
-            <ul className="divide-y divide-gray-300">
-                {users.map((user) => (
-                    <li key={user.id} className="py-2 flex justify-between items-center">
-                        <div>
-                            <p className="font-medium">{user.name} ({user.role})</p>
-                            <p className="text-gray-600 text-sm">{user.email}</p>
-                        </div>
-                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white p-2 rounded">
-                            Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 };
