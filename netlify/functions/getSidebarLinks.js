@@ -1,41 +1,39 @@
+const linksDatabase = {
+    "Super Admin": [
+        { path: "/", label: "Dashboard", icon: "FaHome" },
+        { path: "/properties", label: "Properties", icon: "FaBuilding" },
+        { path: "/clients", label: "Clients", icon: "FaUsers" },
+        { path: "/agents", label: "Agents", icon: "FaUserTie" },
+        { path: "/settings", label: "Settings", icon: "FaCogs" }
+    ],
+    "Admin": [
+        { path: "/", label: "Dashboard", icon: "FaHome" },
+        { path: "/properties", label: "Properties", icon: "FaBuilding" },
+        { path: "/clients", label: "Clients", icon: "FaUsers" },
+        { path: "/agents", label: "Agents", icon: "FaUserTie" }
+    ],
+    "Agent": [
+        { path: "/", label: "Dashboard", icon: "FaHome" },
+        { path: "/properties", label: "Properties", icon: "FaBuilding" }
+    ]
+};
+
 exports.handler = async (event) => {
     try {
-        // Parse incoming request
-        const { role } = JSON.parse(event.body);
+        const { role, updatedLinks } = JSON.parse(event.body);
 
-        // Sidebar links based on roles
-        const sidebarLinks = {
-            "Super Admin": [
-                { path: "/", label: "Dashboard", icon: "FaHome" },
-                { path: "/properties", label: "Properties", icon: "FaBuilding" },
-                { path: "/clients", label: "Clients", icon: "FaUsers" },
-                { path: "/agents", label: "Agents", icon: "FaUserTie" },
-                { path: "/settings", label: "Settings", icon: "FaCogs" }
-            ],
-            "Admin": [
-                { path: "/", label: "Dashboard", icon: "FaHome" },
-                { path: "/properties", label: "Properties", icon: "FaBuilding" },
-                { path: "/clients", label: "Clients", icon: "FaUsers" },
-                { path: "/agents", label: "Agents", icon: "FaUserTie" }
-            ],
-            "Agent": [
-                { path: "/", label: "Dashboard", icon: "FaHome" },
-                { path: "/properties", label: "Properties", icon: "FaBuilding" }
-            ]
-        };
-
-        // Return links based on role
-        const links = sidebarLinks[role] || [];
+        // Update the in-memory links (replace this with database logic in production)
+        linksDatabase[role] = updatedLinks;
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ links })
+            body: JSON.stringify({ message: 'Links updated successfully.' })
         };
     } catch (error) {
-        console.error('Error fetching sidebar links:', error);
+        console.error('Error updating sidebar links:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to fetch sidebar links.' })
+            body: JSON.stringify({ message: 'Failed to update links.' })
         };
     }
 };
