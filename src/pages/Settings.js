@@ -13,9 +13,9 @@ const Settings = ({ userRole }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userResponse = await fetch('https://your-serverless-endpoint/getUsers');
-                const sidebarResponse = await fetch('https://your-serverless-endpoint/getSidebarLinks');
-                const formFieldResponse = await fetch('https://your-serverless-endpoint/getFormFields');
+                const userResponse = await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/getUsers');
+                const sidebarResponse = await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks');
+                const formFieldResponse = await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/getFormFields');
 
                 const usersData = await userResponse.json();
                 const sidebarData = await sidebarResponse.json();
@@ -35,7 +35,7 @@ const Settings = ({ userRole }) => {
     // Backend update functions
     const handleSaveUser = async (newUser) => {
         try {
-            await fetch('https://your-serverless-endpoint/updateUsers', {
+            await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/updateUsers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify([...users, newUser])
@@ -48,7 +48,7 @@ const Settings = ({ userRole }) => {
 
     const handleSidebarUpdate = async (updatedLinks) => {
         try {
-            await fetch('https://your-serverless-endpoint/updateSidebarLinks', {
+            await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/updateSidebarLinks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedLinks)
@@ -61,7 +61,7 @@ const Settings = ({ userRole }) => {
 
     const handleFormFieldUpdate = async (updatedFields) => {
         try {
-            await fetch('https://your-serverless-endpoint/updateFormFields', {
+            await fetch('https://https://timmodashboard.netlify.app/.netlify/functions/updateFormFields', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedFields)
