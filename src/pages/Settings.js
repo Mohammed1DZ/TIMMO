@@ -1,73 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RoleManagementForm from '../components/RoleManagementForm';
-import VisibilitySettings from '../components/VisibilitySettings';
-import FormFieldManagement from '../components/FormFieldManagement';
-import SidebarLinkManagement from '../components/SidebarLinkManagement';  // New import
 
 const Settings = ({ userRole }) => {
-    const [users, setUsers] = useState(
-        JSON.parse(localStorage.getItem('userManagement')) || []  // Initial state from storage
-    );
+    const [users, setUsers] = useState(JSON.parse(localStorage.getItem('userManagement')) || []);
+    const [sidebarLinks, setSidebarLinks] = useState(JSON.parse(localStorage.getItem('dynamicSidebarLinks')) || []);
+    const [formFields, setFormFields] = useState(JSON.parse(localStorage.getItem('dynamicFormFields')) || []);
 
+    // Add new user and save role-based visibility permissions
     const handleSaveUser = (newUser) => {
         const updatedUsers = [...users, newUser];
         setUsers(updatedUsers);
-        localStorage.setItem('userManagement', JSON.stringify(updatedUsers));  // Persist changes
+        localStorage.setItem('userManagement', JSON.stringify(updatedUsers));
     };
 
+    // Edit user permissions (existing user)
+    const handleEditUser = (userId, updatedPermissions) => {
+        const updatedUsers = users.map((user) =>
+            user.id === userId ? { ...user, permissions: updatedPermissions } : user
+        );
+        setUsers(updatedUsers);
+        localStorage.setItem('userManagement', JSON.stringify(updatedUsers));
+    };
+
+    // Delete a user
     const handleDeleteUser = (userId) => {
         const filteredUsers = users.filter((user) => user.id !== userId);
         setUsers(filteredUsers);
         localStorage.setItem('userManagement', JSON.stringify(filteredUsers));
     };
 
-    const handleSaveVisibilitySettings = (settings) => {
-        localStorage.setItem('visibilitySettings', JSON.stringify(settings));
-        alert('Visibility settings saved!');
+    // Sidebar management (add/edit/remove links)
+    const handleSidebarUpdate = (updatedLinks) => {
+        setSidebarLinks(updatedLinks);
+        localStorage.setItem('dynamicSidebarLinks', JSON.stringify(updatedLinks));
+    };
+
+    // Form field management (add/edit/remove form fields)
+    const handleFormFieldUpdate = (updatedFields) => {
+        setFormFields(updatedFields);
+        localStorage.setItem('dynamicFormFields', JSON.stringify(updatedFields));
     };
 
     return (
         <div className="p-10">
-            <h1 className="text-3xl font-bold mb-6">Settings - User & Role Management</h1>
+            <h1 className="text-3xl font-bold mb-6">Settings - Manage Users, Sidebar, and Forms</h1>
 
-            {/* Role Management Form */}
-            <RoleManagementForm onSaveUser={handleSaveUser} />
+            {/* Role Management Section */}
+            <RoleManagementForm
+                users={users}
+                onSaveUser={handleSaveUser}
+                onEditUser={handleEditUser}
+                onDeleteUser={handleDeleteUser}
+            />
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">Visibility Settings</h2>
-            <VisibilitySettings onSave={handleSaveVisibilitySettings} />
+            {/* Sidebar Management Section */}
+            <h2 className="text-2xl font-semibold mt-8">Sidebar Link Management</h2>
+            <SidebarLinkManager sidebarLinks={sidebarLinks} onSidebarUpdate={handleSidebarUpdate} />
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">Current Users</h2>
-            <ul>
-                {users.length === 0 ? (
-                    <p>No users added yet.</p>
-                ) : (
-                    users.map((user) => (
-                        <li key={user.id} className="border p-4 rounded mb-2 flex justify-between">
-                            <div>
-                                <p><strong>ID:</strong> {user.id}</p>
-                                <p><strong>Name:</strong> {user.name}</p>
-                                <p><strong>Role:</strong> {user.role}</p>
-                            </div>
-                            <button
-                                onClick={() => handleDeleteUser(user.id)}
-                                className="bg-red-500 text-white p-2 rounded"
-                            >
-                                Delete
-                            </button>
-                        </li>
-                    ))
-                )}
-            </ul>
-
-            <hr className="my-6" />
-
-            <h2 className="text-2xl font-semibold mb-4">Form Field Management</h2>
-            <FormFieldManagement />
-
-            <hr className="my-6" />
-
-            <h2 className="text-2xl font-semibold mb-4">Sidebar Link Management</h2>
-            <SidebarLinkManagement />
+            {/* Form Field Management Section */}
+            <h2 className="text-2xl font-semibold mt-8">Form Field Management</h2>
+            <FormFieldManager formFields={formFields} onFormFieldUpdate={handleFormFieldUpdate} />
         </div>
     );
 };
