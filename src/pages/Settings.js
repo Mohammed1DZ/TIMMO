@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RoleManagementForm from '../components/RoleManagementForm';
 import VisibilitySettings from '../components/VisibilitySettings';
 import FormFieldManagement from '../components/FormFieldManagement';
+import SidebarLinkManagement from '../components/SidebarLinkManagement';  // New import
 
 const Settings = ({ userRole }) => {
     const [users, setUsers] = useState(
@@ -62,6 +63,11 @@ const Settings = ({ userRole }) => {
 
             <h2 className="text-2xl font-semibold mb-4">Form Field Management</h2>
             <FormFieldManagement />
+
+            <hr className="my-6" />
+
+            <h2 className="text-2xl font-semibold mb-4">Sidebar Link Management</h2>
+            <SidebarLinkManagement />
         </div>
     );
 };
