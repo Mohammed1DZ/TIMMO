@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropertyForm from '../components/PropertyForm';
 import PropertyDetailsModal from '../components/PropertyDetailsModal';
 
@@ -7,6 +7,19 @@ const Properties = () => {
     const [showForm, setShowForm] = useState(false);
     const [selectedProperty, setSelectedProperty] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [visibilitySettings, setVisibilitySettings] = useState({
+        showEditButton: true,
+        showDeleteButton: true,
+        showAddPropertyButton: true,
+    });
+
+    useEffect(() => {
+        // Load visibility settings from localStorage on component mount
+        const storedSettings = JSON.parse(localStorage.getItem('visibilitySettings'));
+        if (storedSettings) {
+            setVisibilitySettings(storedSettings);
+        }
+    }, []);
 
     // Function to add a new property
     const handleAddProperty = (newProperty) => {
@@ -44,16 +57,18 @@ const Properties = () => {
         <div className="p-10">
             <h1 className="text-3xl font-bold mb-6">Properties Management</h1>
 
-            <button
-                onClick={() => {
-                    setShowForm(!showForm);
-                    setIsEditing(false);
-                    setSelectedProperty(null);
-                }}
-                className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
-            >
-                {showForm ? 'Hide Form' : 'Add New Property'}
-            </button>
+            {visibilitySettings.showAddPropertyButton && (
+                <button
+                    onClick={() => {
+                        setShowForm(!showForm);
+                        setIsEditing(false);
+                        setSelectedProperty(null);
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded mb-4"
+                >
+                    {showForm ? 'Hide Form' : 'Add New Property'}
+                </button>
+            )}
 
             {/* Show the form for adding or editing */}
             {showForm && (
@@ -79,6 +94,27 @@ const Properties = () => {
                             <p><strong>Location:</strong> {property.location}</p>
                             <p><strong>Price:</strong> ${property.price}</p>
                             <p><strong>Status:</strong> {property.status}</p>
+
+                            <div className="mt-2 flex space-x-2">
+                                {visibilitySettings.showEditButton && (
+                                    <button
+                                        onClick={handleEditFromModal}
+                                        className="bg-green-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                                {visibilitySettings.showDeleteButton && (
+                                    <button
+                                        onClick={() =>
+                                            setProperties(properties.filter((p) => p.propertyId !== property.propertyId))
+                                        }
+                                        className="bg-red-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+                            </div>
                         </li>
                     ))
                 )}
