@@ -12,7 +12,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/.netlify/functions/login', { email, password });
+            const response = await axios.post('/.netlify/functions/Login', { email, password });
 
             if (response.status === 200) {
                 const { role, token } = response.data;
