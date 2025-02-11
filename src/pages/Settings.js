@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RoleManagementForm from '../components/RoleManagementForm';
 import VisibilitySettings from '../components/VisibilitySettings';
+import FormFieldManagement from '../components/FormFieldManagement';
 
 const Settings = ({ userRole }) => {
     const [users, setUsers] = useState(
@@ -56,6 +57,11 @@ const Settings = ({ userRole }) => {
                     ))
                 )}
             </ul>
+
+            <hr className="my-6" />
+
+            <h2 className="text-2xl font-semibold mb-4">Form Field Management</h2>
+            <FormFieldManagement />
         </div>
     );
 };
