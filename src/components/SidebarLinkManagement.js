@@ -1,64 +1,116 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const SidebarLinkManager = ({ sidebarLinks, onSidebarUpdate }) => {
+const SidebarLinkManagement = ({ userRole }) => {
+    const [links, setLinks] = useState([]);
     const [newLink, setNewLink] = useState({ path: '', label: '', icon: '' });
 
-    const handleAddLink = () => {
-        const updatedLinks = [...sidebarLinks, newLink];
-        onSidebarUpdate(updatedLinks);
-        setNewLink({ path: '', label: '', icon: '' });  // Reset form
+    // Fetch existing sidebar links from the backend on mount
+    useEffect(() => {
+        const fetchLinks = async () => {
+            try {
+                const response = await fetch('https://your-app-name.netlify.app/.netlify/functions/getSidebarLinks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ role: userRole })
+                });
+                const data = await response.json();
+                setLinks(data.links);
+            } catch (error) {
+                console.error('Error fetching links:', error);
+            }
+        };
+
+        fetchLinks();
+    }, [userRole]);
+
+    // Handle input changes for new link
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewLink((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleRemoveLink = (index) => {
-        const updatedLinks = sidebarLinks.filter((_, i) => i !== index);
-        onSidebarUpdate(updatedLinks);
+    // Add a new sidebar link
+    const handleAddLink = async () => {
+        if (newLink.path && newLink.label && newLink.icon) {
+            const updatedLinks = [...links, newLink];
+            setLinks(updatedLinks);  // Update locally
+
+            // Send update to the backend
+            await fetch('https://your-app-name.netlify.app/.netlify/functions/updateSidebarLinks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ role: userRole, updatedLinks })
+            });
+
+            // Clear input fields
+            setNewLink({ path: '', label: '', icon: '' });
+        } else {
+            alert('Please fill all fields before adding a new link.');
+        }
+    };
+
+    // Remove a link from the list
+    const handleRemoveLink = async (index) => {
+        const updatedLinks = links.filter((_, i) => i !== index);
+        setLinks(updatedLinks);
+
+        // Send update to the backend
+        await fetch('https://your-app-name.netlify.app/.netlify/functions/updateSidebarLinks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role: userRole, updatedLinks })
+        });
     };
 
     return (
         <div>
-            <h3 className="text-lg font-bold mb-2">Add or Remove Sidebar Links</h3>
-            <input
-                type="text"
-                placeholder="Path"
-                value={newLink.path}
-                onChange={(e) => setNewLink({ ...newLink, path: e.target.value })}
-                className="border p-2 rounded mr-2"
-            />
-            <input
-                type="text"
-                placeholder="Label"
-                value={newLink.label}
-                onChange={(e) => setNewLink({ ...newLink, label: e.target.value })}
-                className="border p-2 rounded mr-2"
-            />
-            <input
-                type="text"
-                placeholder="Icon"
-                value={newLink.icon}
-                onChange={(e) => setNewLink({ ...newLink, icon: e.target.value })}
-                className="border p-2 rounded mr-2"
-            />
-            <button onClick={handleAddLink} className="bg-blue-500 text-white p-2 rounded">
-                Add Link
-            </button>
-
-            <ul className="mt-4">
-                {sidebarLinks.map((link, index) => (
-                    <li key={index} className="flex justify-between border p-2 rounded mb-2">
-                        <span>
-                            {link.label} - {link.path}
-                        </span>
-                        <button
-                            onClick={() => handleRemoveLink(index)}
-                            className="bg-red-500 text-white p-1 rounded"
-                        >
+            <h3>Manage Sidebar Links for {userRole}</h3>
+            
+            {/* Current Links */}
+            <ul>
+                {links.map((link, index) => (
+                    <li key={index}>
+                        {link.label} ({link.path}) - Icon: {link.icon}
+                        <button onClick={() => handleRemoveLink(index)} style={{ marginLeft: '10px' }}>
                             Remove
                         </button>
                     </li>
                 ))}
             </ul>
+
+            <h4>Add New Link</h4>
+            <div>
+                <input
+                    type="text"
+                    name="path"
+                    placeholder="Path (e.g., /new-page)"
+                    value={newLink.path}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="text"
+                    name="label"
+                    placeholder="Label (e.g., New Page)"
+                    value={newLink.label}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="text"
+                    name="icon"
+                    placeholder="Icon (e.g., FaHome)"
+                    value={newLink.icon}
+                    onChange={handleInputChange}
+                />
+                <button onClick={handleAddLink}>Add Link</button>
+            </div>
         </div>
     );
 };
 
-export default SidebarLinkManager;
+export default SidebarLinkManagement;
