@@ -1,25 +1,38 @@
+const usersDatabase = [
+    {
+        id: "1",
+        name: "Super Admin",
+        email: "superadmin@example.com",
+        role: "Super Admin",
+        permissions: {
+            sidebarLinks: {
+                dashboard: true,
+                properties: true,
+                clients: true,
+                agents: true,
+                settings: true,
+            },
+            buttons: {
+                addUser: true,
+                deleteUser: true,
+                addProperty: true,
+                deleteProperty: true,
+            },
+            forms: {
+                clientForm: true,
+                agentForm: true,
+                propertyForm: true,
+                settingsForm: true,
+            }
+        }
+    }
+];
+
 exports.handler = async () => {
     try {
-        const users = [
-            {
-                id: "1",
-                name: "Super Admin",
-                email: "superadmin@example.com",
-                role: "Super Admin",
-                permissions: ["dashboard", "settings"]
-            },
-            {
-                id: "2",
-                name: "Agent User",
-                email: "agent@example.com",
-                role: "Agent",
-                permissions: ["properties", "clients"]
-            }
-        ];
-
         return {
             statusCode: 200,
-            body: JSON.stringify(users),
+            body: JSON.stringify(usersDatabase),
         };
     } catch (error) {
         return {
