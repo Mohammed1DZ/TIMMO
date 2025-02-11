@@ -19,14 +19,40 @@ const linksDatabase = {
 };
 
 exports.handler = async (event) => {
-    try {
-        console.log('Received request:', event.body);  // Debugging request payload
-        
-        // Parse request safely with fallback for empty/undefined body
-        const parsedBody = event.body ? JSON.parse(event.body) : {};
-        const { role, updatedLinks, action } = parsedBody;
+    console.log('DEBUG: Incoming Request:', event);  // Log the full event
 
+    try {
+        // Ensure we have a body and parse it safely
+        if (!event.body) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ message: 'Request body is missing.' })
+            };
+        }
+
+        let parsedBody;
+        try {
+            parsedBody = JSON.parse(event.body);
+        } catch (jsonError) {
+            console.error('DEBUG: JSON Parsing Error:', jsonError);
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ message: 'Invalid JSON input.', error: jsonError.message })
+            };
+        }
+
+        const { role, updatedLinks, action } = parsedBody;
+        console.log('DEBUG: Parsed Request Body:', parsedBody);
+
+        // Validate role
         if (!role || !linksDatabase[role]) {
+            console.warn('DEBUG: Invalid or missing role.');
             return {
                 statusCode: 400,
                 headers: {
@@ -36,6 +62,7 @@ exports.handler = async (event) => {
             };
         }
 
+        // Handle update action
         if (action === 'update') {
             if (!updatedLinks || !Array.isArray(updatedLinks)) {
                 return {
@@ -47,8 +74,8 @@ exports.handler = async (event) => {
                 };
             }
 
-            console.log('Updating links for role:', role);  // Debug update action
-            linksDatabase[role] = updatedLinks;  // Update in-memory data (replace in production)
+            console.log('DEBUG: Updating links for role:', role);
+            linksDatabase[role] = updatedLinks;
 
             return {
                 statusCode: 200,
@@ -58,7 +85,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ message: 'Links updated successfully.' })
             };
         } else {
-            console.log('Fetching links for role:', role);  // Debug fetch action
+            console.log('DEBUG: Fetching links for role:', role);
             const links = linksDatabase[role];
 
             return {
@@ -70,7 +97,7 @@ exports.handler = async (event) => {
             };
         }
     } catch (error) {
-        console.error('Error handling sidebar links:', error);
+        console.error('DEBUG: Unexpected Error:', error);
         return {
             statusCode: 500,
             headers: {
@@ -78,7 +105,7 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 message: 'Failed to handle sidebar links.',
-                error: error.message || 'Internal Server Error'
+                error: error.message
             })
         };
     }
