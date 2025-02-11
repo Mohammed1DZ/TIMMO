@@ -8,7 +8,7 @@ const SidebarLinkManagement = ({ userRole }) => {
     useEffect(() => {
         const fetchLinks = async () => {
             try {
-                const response = await fetch('https://your-app-name.netlify.app/.netlify/functions/getSidebarLinks', {
+                const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ const SidebarLinkManagement = ({ userRole }) => {
             setLinks(updatedLinks);  // Update locally
 
             // Send update to the backend
-            await fetch('https://your-app-name.netlify.app/.netlify/functions/updateSidebarLinks', {
+            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateSidebarLinks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,7 +59,7 @@ const SidebarLinkManagement = ({ userRole }) => {
         setLinks(updatedLinks);
 
         // Send update to the backend
-        await fetch('https://your-app-name.netlify.app/.netlify/functions/updateSidebarLinks', {
+        await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateSidebarLinks', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
