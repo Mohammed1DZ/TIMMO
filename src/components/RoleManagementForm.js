@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';  // For generating unique IDs
 
-const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, currentUserRole }) => {
+const RoleManagementForm = ({ currentUserRole }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,20 +28,31 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
         }
     });
     const [error, setError] = useState('');
+    const [users, setUsers] = useState([]);
 
+    // Fetch users from the backend on component mount
     useEffect(() => {
-        setError('');  // Clear error on input change
-    }, [name, email, password, role]);
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('https://your-serverless-endpoint/getUsers');
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation checks
         if (!name || !email || !password) {
             setError('All fields are required.');
             return;
@@ -52,7 +63,6 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
             return;
         }
 
-        // Restrict adding Super Admin if not Super Admin
         if (role === 'Super Admin' && currentUserRole !== 'Super Admin') {
             setError('Only Super Admins can add other Super Admins.');
             return;
@@ -64,12 +74,30 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
             email,
             password,
             role,
-            permissions
+            permissions,
         };
 
-        onSaveUser(newUser);
+        try {
+            const response = await fetch('https://your-serverless-endpoint/addOrUpdateUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newUser),
+            });
 
-        // Reset form
+            if (response.ok) {
+                const updatedUsers = await response.json();
+                setUsers(updatedUsers);  // Update the list after successful addition
+                setError('');  // Clear errors
+                resetForm();  // Reset the form
+            } else {
+                setError('Failed to add user. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding user:', error);
+        }
+    };
+
+    const resetForm = () => {
         setName('');
         setEmail('');
         setPassword('');
@@ -97,12 +125,31 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
         });
     };
 
+    const handleDeleteUser = async (userId) => {
+        try {
+            const response = await fetch('https://your-serverless-endpoint/removeUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId }),
+            });
+
+            if (response.ok) {
+                const updatedUsers = await response.json();
+                setUsers(updatedUsers);  // Update the list after successful deletion
+            } else {
+                console.error('Failed to delete user.');
+            }
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    };
+
     const handlePermissionChange = (category, key) => {
         setPermissions((prev) => ({
             ...prev,
             [category]: {
                 ...prev[category],
-                [key]: !prev[category][key]
+                [key]: !prev[category][key],
             }
         }));
     };
@@ -111,11 +158,9 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
         <div className="bg-white p-6 rounded shadow-md w-full max-w-lg">
             <h2 className="text-2xl font-bold mb-4">Add or Manage Users</h2>
 
-            {/* Display errors */}
             {error && <p className="text-red-500 mb-4">{error}</p>}
 
-            {/* User Form */}
-            <form onSubmit={handleSubmit} className="mb-6">
+            <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700">Name</label>
                     <input
@@ -162,60 +207,26 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
                     </select>
                 </div>
 
-                {/* Permissions */}
-                <div className="mb-6">
-                    <label className="block text-gray-700 font-bold mb-2">Set Access Permissions:</label>
-                    
-                    {/* Sidebar Links */}
-                    <div className="mb-4">
-                        <h3 className="text-lg font-semibold">Sidebar Links</h3>
-                        {Object.keys(permissions.sidebarLinks).map((link) => (
-                            <div key={link} className="flex items-center mb-2">
-                                <input
-                                    type="checkbox"
-                                    checked={permissions.sidebarLinks[link]}
-                                    onChange={() => handlePermissionChange('sidebarLinks', link)}
-                                    id={link}
-                                    className="mr-2"
-                                />
-                                <label htmlFor={link} className="capitalize">{link}</label>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="mb-4">
-                        <h3 className="text-lg font-semibold">Buttons</h3>
-                        {Object.keys(permissions.buttons).map((button) => (
-                            <div key={button} className="flex items-center mb-2">
-                                <input
-                                    type="checkbox"
-                                    checked={permissions.buttons[button]}
-                                    onChange={() => handlePermissionChange('buttons', button)}
-                                    id={button}
-                                    className="mr-2"
-                                />
-                                <label htmlFor={button} className="capitalize">{button}</label>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Forms */}
-                    <div className="mb-4">
-                        <h3 className="text-lg font-semibold">Forms</h3>
-                        {Object.keys(permissions.forms).map((form) => (
-                            <div key={form} className="flex items-center mb-2">
-                                <input
-                                    type="checkbox"
-                                    checked={permissions.forms[form]}
-                                    onChange={() => handlePermissionChange('forms', form)}
-                                    id={form}
-                                    className="mr-2"
-                                />
-                                <label htmlFor={form} className="capitalize">{form}</label>
-                            </div>
-                        ))}
-                    </div>
+                <div className="mb-4">
+                    <h3 className="font-semibold">Permissions</h3>
+                    {Object.keys(permissions).map((category) => (
+                        <div key={category}>
+                            <h4 className="text-lg mt-4 capitalize">{category}</h4>
+                            {Object.keys(permissions[category]).map((key) => (
+                                <div key={key} className="flex items-center mb-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={permissions[category][key]}
+                                        onChange={() => handlePermissionChange(category, key)}
+                                        id={`${category}-${key}`}
+                                    />
+                                    <label htmlFor={`${category}-${key}`} className="ml-2 capitalize">
+                                        {key}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
                 </div>
 
                 <button type="submit" className="bg-blue-500 text-white p-2 rounded">
@@ -223,8 +234,7 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
                 </button>
             </form>
 
-            {/* Existing Users List */}
-            <h3 className="text-xl font-bold mb-4">Existing Users</h3>
+            <h3 className="text-xl font-bold mt-6">Existing Users</h3>
             <ul className="divide-y divide-gray-300">
                 {users.map((user) => (
                     <li key={user.id} className="py-2 flex justify-between items-center">
@@ -232,20 +242,9 @@ const RoleManagementForm = ({ users, onSaveUser, onEditUser, onDeleteUser, curre
                             <p className="font-medium">{user.name} ({user.role})</p>
                             <p className="text-gray-600 text-sm">{user.email}</p>
                         </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => onEditUser(user.id)}
-                                className="bg-green-500 text-white p-2 rounded"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => onDeleteUser(user.id)}
-                                className="bg-red-500 text-white p-2 rounded"
-                            >
-                                Delete
-                            </button>
-                        </div>
+                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white p-2 rounded">
+                            Delete
+                        </button>
                     </li>
                 ))}
             </ul>
