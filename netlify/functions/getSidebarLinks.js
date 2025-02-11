@@ -20,28 +20,54 @@ const linksDatabase = {
 
 exports.handler = async (event) => {
     try {
+        console.log('Received request:', event.body);  // Debug request payload
+
+        // Parse incoming request body
         const { role, updatedLinks, action } = JSON.parse(event.body);
 
+        // Check if the role exists
+        if (!role || !linksDatabase[role]) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ message: 'Invalid role provided.' })
+            };
+        }
+
         if (action === 'update') {
-            // Update the in-memory links (replace this with database logic in production)
-            linksDatabase[role] = updatedLinks;
+            console.log('Updating links for role:', role);  // Debug update action
+            linksDatabase[role] = updatedLinks;  // Update in-memory data (replace in production)
+            
             return {
                 statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',  // Allow all origins
+                },
                 body: JSON.stringify({ message: 'Links updated successfully.' })
             };
         } else {
-            // Return the links for the given role
-            const links = linksDatabase[role] || [];
+            console.log('Fetching links for role:', role);  // Debug fetch action
+            const links = linksDatabase[role];
+            
             return {
                 statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',  // Allow all origins
+                },
                 body: JSON.stringify({ links })
             };
         }
     } catch (error) {
         console.error('Error handling sidebar links:', error);
+        
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to handle sidebar links.' })
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ message: 'Failed to handle sidebar links.', error: error.message })
         };
     }
 };
