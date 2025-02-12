@@ -10,34 +10,32 @@ const Settings = ({ userRole }) => {
     const [formFields, setFormFields] = useState([]);
 
     // Fetch data from the backend
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [userResponse, sidebarResponse, formFieldResponse] = await Promise.all([
-                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers'),
-                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks'),
-                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields')
-                ]);
+   useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const userResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers');
+            const sidebarResponse = await fetch(`https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks?role=${userRole}`);
+            const formFieldResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields');
 
-                if (!userResponse.ok || !sidebarResponse.ok || !formFieldResponse.ok) {
-                    throw new Error('One or more API requests failed.');
-                }
-
-                const usersData = await userResponse.json();
-                const sidebarData = await sidebarResponse.json();
-                const formFieldsData = await formFieldResponse.json();
-
-                setUsers(usersData || []);
-                setSidebarLinks(sidebarData.links || []);
-                setFormFields(formFieldsData.fields || []);
-            } catch (error) {
-                console.error('Error fetching settings data:', error);
+            if (!userResponse.ok || !sidebarResponse.ok || !formFieldResponse.ok) {
+                throw new Error('One or more API requests failed.');
             }
-        };
 
-        fetchData();
-    }, []);
+            const usersData = await userResponse.json();
+            const sidebarData = await sidebarResponse.json();
+            const formFieldsData = await formFieldResponse.json();
 
+            setUsers(usersData);
+            setSidebarLinks(sidebarData.links || []); // Ensure sidebarLinks is always an array
+            setFormFields(formFieldsData.fields || []);
+        } catch (error) {
+            console.error('Error fetching settings data:', error);
+        }
+    };
+
+    fetchData();
+}, [userRole]);
+    
     // Backend update functions
     const handleSaveUser = async (newUser) => {
         try {
