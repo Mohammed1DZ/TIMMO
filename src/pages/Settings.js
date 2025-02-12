@@ -22,8 +22,8 @@ const Settings = ({ userRole }) => {
                 const formFieldsData = await formFieldResponse.json();
 
                 setUsers(usersData);
-                setSidebarLinks(sidebarData.links);
-                setFormFields(formFieldsData.fields);
+                setSidebarLinks(sidebarData.links || []);
+                setFormFields(formFieldsData.fields || []);
             } catch (error) {
                 console.error('Error fetching settings data:', error);
             }
@@ -35,12 +35,14 @@ const Settings = ({ userRole }) => {
     // Backend update functions
     const handleSaveUser = async (newUser) => {
         try {
-            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateUsers', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateUsers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify([...users, newUser])
             });
-            setUsers((prev) => [...prev, newUser]);
+            if (response.ok) {
+                setUsers((prev) => [...prev, newUser]);
+            }
         } catch (error) {
             console.error('Error saving user:', error);
         }
@@ -48,12 +50,14 @@ const Settings = ({ userRole }) => {
 
     const handleSidebarUpdate = async (updatedLinks) => {
         try {
-            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateSidebarLinks', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateSidebarLinks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedLinks)
             });
-            setSidebarLinks(updatedLinks);
+            if (response.ok) {
+                setSidebarLinks(updatedLinks);
+            }
         } catch (error) {
             console.error('Error updating sidebar links:', error);
         }
@@ -61,12 +65,14 @@ const Settings = ({ userRole }) => {
 
     const handleFormFieldUpdate = async (updatedFields) => {
         try {
-            await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateFormFields', {
+            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/updateFormFields', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedFields)
             });
-            setFormFields(updatedFields);
+            if (response.ok) {
+                setFormFields(updatedFields);
+            }
         } catch (error) {
             console.error('Error updating form fields:', error);
         }
@@ -100,23 +106,27 @@ const Settings = ({ userRole }) => {
                     <RoleManagementForm
                         users={users}
                         onSaveUser={handleSaveUser}
-                        permissions={permissionsChecklist} // Pass the updated checklist
+                        permissions={permissionsChecklist}
                     />
                 );
             case 'sidebar':
-                return (
+                return userRole === 'Super Admin' || userRole === 'Admin' ? (
                     <SidebarLinkManagement
                         sidebarLinks={sidebarLinks}
                         onSidebarUpdate={handleSidebarUpdate}
                         userRole={userRole}
                     />
+                ) : (
+                    <p className="text-red-500">Access Denied</p>
                 );
             case 'formFields':
-                return (
+                return userRole === 'Super Admin' || userRole === 'Admin' ? (
                     <FormFieldManagement
                         formFields={formFields}
                         onFormFieldUpdate={handleFormFieldUpdate}
                     />
+                ) : (
+                    <p className="text-red-500">Access Denied</p>
                 );
             default:
                 return null;
@@ -140,28 +150,32 @@ const Settings = ({ userRole }) => {
                 >
                     Role Management
                 </button>
-                <button
-                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
-                        activeSection === 'sidebar' 
-                            ? 'bg-blue-500 text-white ring-blue-500' 
-                            : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
-                    }`}
-                    onClick={() => setActiveSection('sidebar')}
-                    aria-selected={activeSection === 'sidebar'}
-                >
-                    Sidebar Management
-                </button>
-                <button
-                    className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
-                        activeSection === 'formFields' 
-                            ? 'bg-blue-500 text-white ring-blue-500' 
-                            : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
-                    }`}
-                    onClick={() => setActiveSection('formFields')}
-                    aria-selected={activeSection === 'formFields'}
-                >
-                    Form Field Management
-                </button>
+                {userRole === 'Super Admin' || userRole === 'Admin' ? (
+                    <>
+                        <button
+                            className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                                activeSection === 'sidebar' 
+                                    ? 'bg-blue-500 text-white ring-blue-500' 
+                                    : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                            }`}
+                            onClick={() => setActiveSection('sidebar')}
+                            aria-selected={activeSection === 'sidebar'}
+                        >
+                            Sidebar Management
+                        </button>
+                        <button
+                            className={`px-4 py-2 rounded transition duration-200 ease-in-out focus:ring-2 ${
+                                activeSection === 'formFields' 
+                                    ? 'bg-blue-500 text-white ring-blue-500' 
+                                    : 'bg-gray-200 hover:bg-gray-300 focus:ring-gray-300'
+                            }`}
+                            onClick={() => setActiveSection('formFields')}
+                            aria-selected={activeSection === 'formFields'}
+                        >
+                            Form Field Management
+                        </button>
+                    </>
+                ) : null}
             </div>
 
             {/* Dynamic Content */}
