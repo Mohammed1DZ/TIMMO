@@ -13,15 +13,21 @@ const Settings = ({ userRole }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers');
-                const sidebarResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks');
-                const formFieldResponse = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields');
+                const [userResponse, sidebarResponse, formFieldResponse] = await Promise.all([
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getUsers'),
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks'),
+                    fetch('https://timmodashboard.netlify.app/.netlify/functions/getFormFields')
+                ]);
+
+                if (!userResponse.ok || !sidebarResponse.ok || !formFieldResponse.ok) {
+                    throw new Error('One or more API requests failed.');
+                }
 
                 const usersData = await userResponse.json();
                 const sidebarData = await sidebarResponse.json();
                 const formFieldsData = await formFieldResponse.json();
 
-                setUsers(usersData);
+                setUsers(usersData || []);
                 setSidebarLinks(sidebarData.links || []);
                 setFormFields(formFieldsData.fields || []);
             } catch (error) {
@@ -40,8 +46,11 @@ const Settings = ({ userRole }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify([...users, newUser])
             });
+
             if (response.ok) {
                 setUsers((prev) => [...prev, newUser]);
+            } else {
+                console.error('Failed to update users.');
             }
         } catch (error) {
             console.error('Error saving user:', error);
@@ -55,8 +64,11 @@ const Settings = ({ userRole }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedLinks)
             });
+
             if (response.ok) {
                 setSidebarLinks(updatedLinks);
+            } else {
+                console.error('Failed to update sidebar links.');
             }
         } catch (error) {
             console.error('Error updating sidebar links:', error);
@@ -70,20 +82,32 @@ const Settings = ({ userRole }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedFields)
             });
+
             if (response.ok) {
                 setFormFields(updatedFields);
+            } else {
+                console.error('Failed to update form fields.');
             }
         } catch (error) {
             console.error('Error updating form fields:', error);
         }
     };
 
-    // Updated permissions structure
+    // Updated permissions structure (Fixing reduce issue)
     const permissionsChecklist = {
-        sidebarLinks: sidebarLinks.reduce((acc, link) => {
-            acc[link.path] = false;  // Default all sidebar permissions to false
-            return acc;
-        }, {}),
+        sidebarLinks: sidebarLinks.length > 0 
+            ? sidebarLinks.reduce((acc, link) => {
+                acc[link.path] = false;
+                return acc;
+            }, {}) 
+            : {
+                "/": false,
+                "/properties": false,
+                "/clients": false,
+                "/agents": false,
+                "/settings": false
+            }, // Default structure if empty
+
         buttons: {
             addUser: false,
             editUser: false,
@@ -95,6 +119,7 @@ const Settings = ({ userRole }) => {
             editClient: false,
             deleteClient: false
         },
+
         forms: {
             clientForm: false,
             agentForm: false,
