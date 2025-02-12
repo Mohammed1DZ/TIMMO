@@ -80,6 +80,10 @@ const Settings = ({ userRole }) => {
 
     // Updated permissions structure
     const permissionsChecklist = {
+        sidebarLinks: sidebarLinks.reduce((acc, link) => {
+            acc[link.path] = false;  // Default all sidebar permissions to false
+            return acc;
+        }, {}),
         buttons: {
             addUser: false,
             editUser: false,
