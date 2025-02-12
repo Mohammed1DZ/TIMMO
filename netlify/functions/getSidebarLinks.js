@@ -22,17 +22,31 @@ exports.handler = async (event) => {
     console.log('DEBUG: Incoming Request:', event);
 
     try {
-        let role;
+        let role, action, updatedLinks;
 
-        // Support GET (fetch) and POST (update)
+        // Handle GET requests (fetch sidebar links)
         if (event.httpMethod === "GET") {
             role = event.queryStringParameters?.role;
-        } else if (event.httpMethod === "POST" && event.body) {
-            const parsedBody = JSON.parse(event.body);
-            role = parsedBody.role;
+        } 
+        
+        // Handle POST requests (update sidebar links)
+        else if (event.httpMethod === "POST" && event.body) {
+            try {
+                const parsedBody = JSON.parse(event.body);
+                role = parsedBody.role;
+                action = parsedBody.action;
+                updatedLinks = parsedBody.updatedLinks;
+            } catch (jsonError) {
+                console.error('DEBUG: JSON Parsing Error:', jsonError);
+                return {
+                    statusCode: 400,
+                    headers: { 'Access-Control-Allow-Origin': '*' },
+                    body: JSON.stringify({ message: 'Invalid JSON input.', error: jsonError.message })
+                };
+            }
         }
 
-        // If role is missing or invalid, return a proper error response
+        // Validate role input
         if (!role || !linksDatabase[role]) {
             console.warn('DEBUG: Invalid or missing role.');
             return {
@@ -42,34 +56,7 @@ exports.handler = async (event) => {
             };
         }
 
-        console.log('DEBUG: Fetching links for role:', role);
-        return {
-            statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ links: linksDatabase[role] })
-        };
-
-    } catch (error) {
-        console.error('DEBUG: Unexpected Error:', error);
-        return {
-            statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ message: 'Failed to handle sidebar links.', error: error.message })
-        };
-    }
-};
-
-        // Validate role
-        if (!role || !linksDatabase[role]) {
-            console.warn('DEBUG: Invalid or missing role.');
-            return {
-                statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': '*' },
-                body: JSON.stringify({ message: 'Invalid or missing role provided.' })
-            };
-        }
-
-        // Handle update action for POST requests
+        // Handle updating sidebar links if action is "update"
         if (event.httpMethod === "POST" && action === 'update') {
             if (!updatedLinks || !Array.isArray(updatedLinks)) {
                 return {
@@ -89,12 +76,12 @@ exports.handler = async (event) => {
             };
         }
 
-        // Default: Fetch the sidebar links for the given role
+        // Default: Return sidebar links for the requested role
         console.log('DEBUG: Fetching links for role:', role);
         return {
             statusCode: 200,
             headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ links: linksDatabase[role] })
+            body: JSON.stringify({ links: linksDatabase[role] || [] }) // Ensure response is always an array
         };
 
     } catch (error) {
@@ -102,7 +89,10 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: { 'Access-Control-Allow-Origin': '*' },
-            body: JSON.stringify({ message: 'Failed to handle sidebar links.', error: error.message })
+            body: JSON.stringify({
+                message: 'Failed to handle sidebar links.',
+                error: error.message
+            })
         };
     }
 };
