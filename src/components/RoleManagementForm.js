@@ -6,7 +6,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('Agent');  // Default role
+    const [sidebarLinks, setSidebarLinks] = useState([]);
     const [permissions, setPermissions] = useState({
+        sidebarLinks: {},
         buttons: {
             addUser: false,
             editUser: false,
@@ -24,10 +26,11 @@ const RoleManagementForm = ({ currentUserRole }) => {
             propertyForm: false
         }
     });
+
     const [error, setError] = useState('');
     const [users, setUsers] = useState([]);
 
-    // Fetch users from the backend on component mount
+    // Fetch users and sidebar links from the backend on mount
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -39,7 +42,23 @@ const RoleManagementForm = ({ currentUserRole }) => {
             }
         };
 
+        const fetchSidebarLinks = async () => {
+            try {
+                const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/getSidebarLinks');
+                const data = await response.json();
+                const sidebarPermissions = data.links.reduce((acc, link) => {
+                    acc[link.path] = false;  // Default to false
+                    return acc;
+                }, {});
+                setSidebarLinks(data.links);
+                setPermissions(prev => ({ ...prev, sidebarLinks: sidebarPermissions }));
+            } catch (error) {
+                console.error('Error fetching sidebar links:', error);
+            }
+        };
+
         fetchUsers();
+        fetchSidebarLinks();
     }, []);
 
     const validateEmail = (email) => {
@@ -71,7 +90,7 @@ const RoleManagementForm = ({ currentUserRole }) => {
             email,
             password,
             role,
-            permissions,
+            permissions
         };
 
         try {
@@ -100,6 +119,10 @@ const RoleManagementForm = ({ currentUserRole }) => {
         setPassword('');
         setRole('Agent');
         setPermissions({
+            sidebarLinks: sidebarLinks.reduce((acc, link) => {
+                acc[link.path] = false;  // Reset all sidebar permissions
+                return acc;
+            }, {}),
             buttons: {
                 addUser: false,
                 editUser: false,
@@ -117,25 +140,6 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 propertyForm: false
             }
         });
-    };
-
-    const handleDeleteUser = async (userId) => {
-        try {
-            const response = await fetch('https://timmodashboard.netlify.app/.netlify/functions/removeUser', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId }),
-            });
-
-            if (response.ok) {
-                const updatedUsers = await response.json();
-                setUsers(updatedUsers);  // Update the list after successful deletion
-            } else {
-                console.error('Failed to delete user.');
-            }
-        } catch (error) {
-            console.error('Error deleting user:', error);
-        }
     };
 
     const handlePermissionChange = (category, key) => {
@@ -156,10 +160,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-gray-700" htmlFor="name">Name</label>
+                    <label className="block text-gray-700">Name</label>
                     <input
                         type="text"
-                        id="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -168,10 +171,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700" htmlFor="email">Email</label>
+                    <label className="block text-gray-700">Email</label>
                     <input
                         type="email"
-                        id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -180,10 +182,9 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700" htmlFor="password">Password</label>
+                    <label className="block text-gray-700">Password</label>
                     <input
                         type="password"
-                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -192,9 +193,8 @@ const RoleManagementForm = ({ currentUserRole }) => {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700" htmlFor="role">Role</label>
+                    <label className="block text-gray-700">Role</label>
                     <select
-                        id="role"
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                         className="w-full p-2 border rounded"
@@ -205,24 +205,20 @@ const RoleManagementForm = ({ currentUserRole }) => {
                     </select>
                 </div>
 
+                {/* Sidebar Links Permissions */}
                 <div className="mb-4">
-                    <h3 className="font-semibold">Permissions</h3>
-                    {Object.keys(permissions).map((category) => (
-                        <div key={category}>
-                            <h4 className="text-lg mt-4 capitalize">{category}</h4>
-                            {Object.keys(permissions[category]).map((key) => (
-                                <div key={key} className="flex items-center mb-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={permissions[category][key]}
-                                        onChange={() => handlePermissionChange(category, key)}
-                                        id={`${category}-${key}`}
-                                    />
-                                    <label htmlFor={`${category}-${key}`} className="ml-2 capitalize">
-                                        {key}
-                                    </label>
-                                </div>
-                            ))}
+                    <h3 className="font-semibold">Sidebar Links</h3>
+                    {sidebarLinks.map((link) => (
+                        <div key={link.path} className="flex items-center mb-2">
+                            <input
+                                type="checkbox"
+                                checked={permissions.sidebarLinks[link.path]}
+                                onChange={() => handlePermissionChange('sidebarLinks', link.path)}
+                                id={`sidebar-${link.path}`}
+                            />
+                            <label htmlFor={`sidebar-${link.path}`} className="ml-2 capitalize">
+                                {link.label}
+                            </label>
                         </div>
                     ))}
                 </div>
